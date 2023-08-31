@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Extream Camera</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="natural_disasters">Стихийные бедствия</string>
+    <string name="paranormal">Паранормальные явления</string>
+</resources>

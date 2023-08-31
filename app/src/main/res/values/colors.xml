@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="menu_buttons_start_color">#FF87CEEB</color>
+    <color name="menu_buttons_end_color">#FF000000</color>
+    <color name="menu_buttons_text">#FFFFFF00</color>
+    <color name="menu_top_background_color">#FFB0C4DE</color>
+    <color name="menu_bottom_background_color">#FF808080</color>
+
+</resources>
