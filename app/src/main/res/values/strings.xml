@@ -5,4 +5,7 @@
 
     <string name="natural_disasters">Стихийные бедствия</string>
     <string name="paranormal">Паранормальные явления</string>
+    <string name="camera_permission_request">Для работы необходимо разрешить приложению доступ к камере.</string>
+    <string name="permission_granted">Разрешить</string>
+    <string name="permission_deny">Запретить</string>
 </resources>

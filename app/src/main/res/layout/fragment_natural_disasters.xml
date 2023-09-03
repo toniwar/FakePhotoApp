@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.fragments.NaturalDisasters">
+    tools:context=".presentation.fragments.NaturalDisasters"
+    android:background="@drawable/menu_background_drawable"
+    >
 
    <ImageButton
        android:id="@+id/take_photo_btn"
@@ -14,15 +16,34 @@
        app:layout_constraintTop_toTopOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintEnd_toEndOf="parent"
+       android:src="@drawable/baseline_photo_camera_24"
+       android:background="@drawable/camera_button_shape"
+
        />
 
-    <ImageView
+    <androidx.camera.view.PreviewView
         android:id="@+id/photo"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="400dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
         android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/take_photo_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/white"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_element"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintHorizontal_bias="0.9"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
