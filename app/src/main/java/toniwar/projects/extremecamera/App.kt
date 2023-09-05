@@ -1,8 +1,8 @@
-package toniwar.projects.extreamcamera
+package toniwar.projects.extremecamera
 
 import android.app.Application
-import toniwar.projects.extreamcamera.di.DaggerMainComponent
-import toniwar.projects.extreamcamera.di.MainComponent
+import toniwar.projects.extremecamera.di.DaggerMainComponent
+import toniwar.projects.extremecamera.di.MainComponent
 
 class App: Application() {
 

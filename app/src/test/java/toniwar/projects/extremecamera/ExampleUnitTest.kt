@@ -1,4 +1,4 @@
-package toniwar.projects.extreamcamera
+package toniwar.projects.extremecamera
 
 import org.junit.Test
 

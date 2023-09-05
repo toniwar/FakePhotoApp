@@ -1,11 +1,11 @@
-package toniwar.projects.extreamcamera.di
+package toniwar.projects.extremecamera.di
 
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import toniwar.projects.extreamcamera.presentation.view_models.CameraViewModel
-import toniwar.projects.extreamcamera.presentation.view_models.vm_fabric.ViewModelsFabric
+import toniwar.projects.extremecamera.presentation.view_models.CameraViewModel
+import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric
 
 
 @Module

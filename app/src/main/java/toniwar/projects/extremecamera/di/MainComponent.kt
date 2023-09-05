@@ -1,9 +1,9 @@
-package toniwar.projects.extreamcamera.di
+package toniwar.projects.extremecamera.di
 
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import toniwar.projects.extreamcamera.App
+import toniwar.projects.extremecamera.App
 import javax.inject.Scope
 
 @MainComponent.Companion.MainScope

@@ -1,4 +1,4 @@
-package toniwar.projects.extreamcamera.presentation.fragments
+package toniwar.projects.extremecamera.presentation.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import toniwar.projects.extreamcamera.databinding.FragmentMenuBinding
-import toniwar.projects.extreamcamera.presentation.FragmentListener
+import toniwar.projects.extremecamera.databinding.FragmentMenuBinding
+import toniwar.projects.extremecamera.presentation.FragmentListener
 
 
 class Menu : Fragment() {
@@ -35,7 +35,7 @@ class Menu : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         return binding.root
     }
@@ -44,12 +44,12 @@ class Menu : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            openNaturalDisastersBtn.setOnClickListener {
-                listener.openFragment(FragmentListener.Companion.ActionFlag.NATURAL_DISASTERS)
+            menuTakePhotoBtn.setOnClickListener {
+                listener.openFragment(FragmentListener.Companion.ActionFlag.CAMERA_X, null)
             }
 
-            openParanormalBtn.setOnClickListener {
-                listener.openFragment(FragmentListener.Companion.ActionFlag.PARANORMAL)
+            menuChoosePhotoBtn.setOnClickListener {
+                listener.openFragment(FragmentListener.Companion.ActionFlag.GALLERY, null)
             }
         }
     }

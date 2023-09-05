@@ -1,5 +1,6 @@
-package toniwar.projects.extreamcamera.presentation
+package toniwar.projects.extremecamera.presentation
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.os.Build
@@ -13,6 +14,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import toniwar.projects.extremecamera.Constants
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -32,8 +34,8 @@ class CameraController(
         cameraView.controller = cameraController
     }
 
-    fun takePhoto(){
-        val name = SimpleDateFormat(MainActivity.FILENAME_FORMAT, Locale.ROOT)
+    fun takePhoto(path: (String)-> Unit){
+        val name = SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -55,17 +57,20 @@ class CameraController(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback{
                 override fun onError(exception: ImageCaptureException) {
-                    Log.e(MainActivity.TAG,
+                    Log.e(Constants.TAG,
                         "Photo capture failed: ${exception.message}",
                         exception)
                 }
 
+                @SuppressLint("RestrictedApi")
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val msg = "Photo captured succeeded: ${outputFileResults.savedUri}"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(MainActivity.TAG, msg)
+                    Log.d(Constants.TAG, msg)
+                    path.invoke(outputFileResults.savedUri.toString())
                 }
             }
         )
+
     }
 }

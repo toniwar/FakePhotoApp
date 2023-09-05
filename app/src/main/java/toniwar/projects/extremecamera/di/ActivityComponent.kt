@@ -1,8 +1,8 @@
-package toniwar.projects.extreamcamera.di
+package toniwar.projects.extremecamera.di
 
 import dagger.Component
-import toniwar.projects.extreamcamera.presentation.MainActivity
-import toniwar.projects.extreamcamera.presentation.fragments.NaturalDisasters
+import toniwar.projects.extremecamera.presentation.MainActivity
+import toniwar.projects.extremecamera.presentation.fragments.CameraX
 import javax.inject.Scope
 
 @ActivityComponent.Companion.ActivityComponentScope
@@ -14,7 +14,7 @@ interface ActivityComponent {
 
     fun injectActivity(activity: MainActivity)
 
-    fun injectNaturalDisasters(fragment: NaturalDisasters)
+    fun injectCameraX(fragment: CameraX)
 
     @Component.Factory
     interface ActivityComponentFactory{
