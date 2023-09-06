@@ -36,7 +36,7 @@ class CameraRepositoryImpl @Inject constructor(
     }
 
     override fun takePhoto(
-        path: (String)-> Unit
+        imageUrl: (String)-> Unit
     ){
         val name = SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
             .format(System.currentTimeMillis())
@@ -70,7 +70,7 @@ class CameraRepositoryImpl @Inject constructor(
                     val msg = "Photo captured succeeded: ${outputFileResults.savedUri}"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     Log.d(Constants.TAG, msg)
-                    path.invoke(outputFileResults.savedUri.toString())
+                    imageUrl.invoke(outputFileResults.savedUri.toString())
                 }
             }
         )
