@@ -1,4 +1,4 @@
-package toniwar.projects.extremecamera.presentation
+package toniwar.projects.extremecamera.data
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -15,26 +15,29 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import toniwar.projects.extremecamera.Constants
+import toniwar.projects.extremecamera.domain.CameraRepository
 import java.text.SimpleDateFormat
 import java.util.Locale
+import javax.inject.Inject
 
-class CameraController(
-    private val context: Context,
-    private val cameraView: PreviewView,
-    private val owner: LifecycleOwner,
-    ) {
+class CameraRepositoryImpl @Inject constructor(
+    private val context: Context
+    ):
+    CameraRepository{
 
     private lateinit var cameraController: LifecycleCameraController
 
 
-    fun startCamera(){
+    override fun <V, O> startCamera(view: V, owner: O) {
         cameraController = LifecycleCameraController(context)
-        cameraController.bindToLifecycle(owner)
+        cameraController.bindToLifecycle(owner as LifecycleOwner)
         cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-        cameraView.controller = cameraController
+        (view as PreviewView).controller = cameraController
     }
 
-    fun takePhoto(path: (String)-> Unit){
+    override fun takePhoto(
+        path: (String)-> Unit
+    ){
         val name = SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {

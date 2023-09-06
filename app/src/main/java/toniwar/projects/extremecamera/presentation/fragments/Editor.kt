@@ -3,10 +3,10 @@ package toniwar.projects.extremecamera.presentation.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.davemorrissey.labs.subscaleview.ImageSource
 import toniwar.projects.extremecamera.App
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 
 class Editor : Fragment() {
-    var path: String? = null
+    private var path: String? = null
 
     private val binding by lazy {
         FragmentEditorBinding.inflate(layoutInflater)
@@ -28,7 +28,7 @@ class Editor : Fragment() {
         (requireActivity().application as App).provideMainComponent()
     }
 
-    private val component by lazy{
+    private val component by lazy {
         DaggerActivityComponent.factory().create(mainComponent)
     }
 
@@ -39,16 +39,14 @@ class Editor : Fragment() {
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
+        arguments?.let {
+            path = it.getString(URL_KEY)
+        }
         return binding.root
     }
 
@@ -59,14 +57,14 @@ class Editor : Fragment() {
         Log.d("ImagePath", path!!)
     }
 
-    companion object{
-        fun newInstance(arg: String? = null): Editor{
-            val editor = Editor()
-            editor.path = arg
-            return editor
-
+    companion object {
+        const val URL_KEY = "Url"
+        fun newInstance(arg: String? = null) = Editor().apply {
+            arguments = Bundle().apply {
+                putString(URL_KEY, arg)
+            }
         }
-    }
 
+    }
 
 }

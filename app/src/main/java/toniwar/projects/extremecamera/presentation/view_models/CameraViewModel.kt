@@ -7,5 +7,4 @@ class CameraViewModel @Inject constructor(
 ): ViewModel() {
 
 
-
 }

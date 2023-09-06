@@ -8,7 +8,7 @@ import javax.inject.Scope
 @ActivityComponent.Companion.ActivityComponentScope
 @Component(
     dependencies = [MainComponent::class],
-    modules = [ViewModelsModule::class]
+    modules = [ViewModelsModule::class, RepositoryModule::class]
 )
 interface ActivityComponent {
 

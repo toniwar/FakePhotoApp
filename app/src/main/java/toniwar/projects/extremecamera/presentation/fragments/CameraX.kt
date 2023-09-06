@@ -14,7 +14,7 @@ import toniwar.projects.extremecamera.App
 import toniwar.projects.extremecamera.Permissions
 import toniwar.projects.extremecamera.databinding.FragmentCameraXBinding
 import toniwar.projects.extremecamera.di.DaggerActivityComponent
-import toniwar.projects.extremecamera.presentation.CameraController
+import toniwar.projects.extremecamera.domain.CameraRepository
 import toniwar.projects.extremecamera.presentation.FragmentListener
 import toniwar.projects.extremecamera.presentation.view_models.CameraViewModel
 import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric
@@ -43,7 +43,8 @@ class CameraX : Fragment() {
         ViewModelProvider(this, fabric)[CameraViewModel::class.java]
     }
 
-    private val cameraController by lazy { CameraController(requireContext(), binding.photo, activity as LifecycleOwner) }
+    @Inject
+    lateinit var cameraRepository: CameraRepository
 
     private val activityResultLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()){
@@ -57,7 +58,7 @@ class CameraX : Fragment() {
         if(!permissionsGranted){
             Toast.makeText(activity, "Deny!", Toast.LENGTH_SHORT).show()
         }
-        else cameraController.startCamera()
+        else cameraRepository.startCamera(binding.photo, activity as LifecycleOwner)
     }
 
     override fun onAttach(context: Context) {
@@ -85,10 +86,10 @@ class CameraX : Fragment() {
         component.injectCameraX(this)
         if(!Permissions.hasPermissions(requireContext())) activityResultLauncher
             .launch(Permissions.REQUIRED_PERMISSIONS)
-        else cameraController.startCamera()
+        else cameraRepository.startCamera(binding.photo, activity as LifecycleOwner)
 
         binding.takePhotoBtn.setOnClickListener {
-            cameraController.takePhoto {
+            cameraRepository.takePhoto {
                 listener.openFragment(FragmentListener.Companion.ActionFlag.EDITOR, it)
             }
 
