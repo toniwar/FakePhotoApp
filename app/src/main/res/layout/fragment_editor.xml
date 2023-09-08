@@ -13,57 +13,34 @@
        android:id="@+id/photo"
        android:layout_width="0dp"
        android:layout_height="0dp"
-       android:background="@color/menu_icons_color"
-       android:layout_marginTop="10dp"
+       android:layout_marginVertical="10dp"
        android:layout_marginHorizontal="10dp"
        app:layout_constraintEnd_toEndOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintTop_toTopOf="parent"
-       app:layout_constraintBottom_toTopOf="@id/guideline"
+       app:layout_constraintBottom_toBottomOf="parent"
 
        />
-
-   <androidx.constraintlayout.widget.Guideline
-       android:id="@+id/guideline"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:orientation="horizontal"
-       app:layout_constraintGuide_percent="0.4" />
-
-   <ImageView
-       android:id="@+id/add_destructive_element_btn"
-       android:layout_width="100dp"
-       android:layout_height="100dp"
-       android:layout_marginTop="10dp"
+   <androidx.appcompat.widget.AppCompatImageButton
+       android:id="@+id/add_element_button"
+       android:layout_width="0dp"
+       android:layout_height="30dp"
+       android:alpha="0.5"
        app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintEnd_toStartOf="@id/add_cosmic_element_btn"
-       app:layout_constraintTop_toBottomOf="@id/guideline"
-       android:background="@drawable/shape_for_menu_icons"
-       android:src="@drawable/destructive_element_icon"
-
-
-       />
-   <ImageView
-       android:id="@+id/add_cosmic_element_btn"
-       android:layout_width="100dp"
-       android:layout_height="100dp"
-       android:layout_marginTop="10dp"
-       app:layout_constraintStart_toEndOf="@id/add_destructive_element_btn"
-       app:layout_constraintEnd_toStartOf="@id/add_ufo_btn"
-       app:layout_constraintTop_toBottomOf="@id/guideline"
-       android:background="@drawable/shape_for_menu_icons"
-       android:src="@drawable/cosmic_element_icon"
-       />
-   <ImageView
-       android:id="@+id/add_ufo_btn"
-       android:layout_width="100dp"
-       android:layout_height="100dp"
-       android:layout_marginTop="10dp"
-       app:layout_constraintStart_toEndOf="@id/add_cosmic_element_btn"
        app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintTop_toBottomOf="@id/guideline"
-       android:background="@drawable/shape_for_menu_icons"
-       android:src="@drawable/ufo_icon"
+       app:layout_constraintBottom_toTopOf="@id/elements_rv"
+       android:src="@drawable/baseline_keyboard_arrow_up_24"
        />
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:id="@+id/elements_rv"
+       android:layout_width="0dp"
+       android:layout_height="0dp"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       android:background="@color/add_button_color"
+       />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import toniwar.projects.extremecamera.App
 import toniwar.projects.extremecamera.databinding.FragmentEditorBinding
 import toniwar.projects.extremecamera.di.DaggerActivityComponent
-import toniwar.projects.extremecamera.presentation.view_models.CameraViewModel
+import toniwar.projects.extremecamera.presentation.view_models.EditorViewModel
 import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class Editor : Fragment() {
     @Inject
     lateinit var fabric: ViewModelsFabric
     private val vm by lazy {
-        ViewModelProvider(this, fabric)[CameraViewModel::class.java]
+        ViewModelProvider(this, fabric)[EditorViewModel::class.java]
     }
 
 
@@ -53,8 +53,12 @@ class Editor : Fragment() {
     @SuppressLint("SdCardPath")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        component.injectEditor(this)
         binding.photo.setImage(ImageSource.uri(path!!))
         Log.d("ImagePath", path!!)
+        binding.addElementButton.setOnClickListener {
+            vm.showMenu(binding.elementsRv)
+        }
     }
 
     companion object {

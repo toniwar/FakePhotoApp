@@ -4,7 +4,7 @@
 
     >
     <solid
-        android:color="@color/menu_buttons_start_color"
+        android:color="@color/take_photo_button_color"
         />
 
 

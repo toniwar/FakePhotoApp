@@ -89,6 +89,7 @@ class CameraX : Fragment() {
         else cameraRepository.startCamera(binding.photo, activity as LifecycleOwner)
 
         binding.takePhotoBtn.setOnClickListener {
+            vm.showMenu(requireContext())
             cameraRepository.takePhoto {
                 listener.openFragment(FragmentListener.Companion.ActionFlag.EDITOR, it)
             }

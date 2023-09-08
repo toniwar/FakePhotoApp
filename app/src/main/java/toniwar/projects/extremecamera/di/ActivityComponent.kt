@@ -3,6 +3,7 @@ package toniwar.projects.extremecamera.di
 import dagger.Component
 import toniwar.projects.extremecamera.presentation.MainActivity
 import toniwar.projects.extremecamera.presentation.fragments.CameraX
+import toniwar.projects.extremecamera.presentation.fragments.Editor
 import javax.inject.Scope
 
 @ActivityComponent.Companion.ActivityComponentScope
@@ -15,6 +16,8 @@ interface ActivityComponent {
     fun injectActivity(activity: MainActivity)
 
     fun injectCameraX(fragment: CameraX)
+
+    fun injectEditor(fragment: Editor)
 
     @Component.Factory
     interface ActivityComponentFactory{

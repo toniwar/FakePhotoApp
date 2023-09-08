@@ -8,6 +8,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
 
+@Suppress("UNCHECKED_CAST")
 @ActivityComponent.Companion.ActivityComponentScope
 class ViewModelsFabric @Inject constructor(
     private val vMProviders: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
