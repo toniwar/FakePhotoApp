@@ -21,15 +21,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
 
         />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.0" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/add_element_button"
-        android:layout_width="30dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:alpha="0.5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/elements_rv"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
         android:src="@drawable/baseline_keyboard_arrow_left_24"
         />
 
@@ -40,6 +46,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline"
         android:background="@color/add_button_color"
         />
 

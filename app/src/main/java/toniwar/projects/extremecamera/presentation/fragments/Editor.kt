@@ -57,7 +57,7 @@ class Editor : Fragment() {
         binding.photo.setImage(ImageSource.uri(path!!))
         Log.d("ImagePath", path!!)
         binding.addElementButton.setOnClickListener {
-            vm.showMenu(binding.elementsRv)
+            vm.showMenu(binding.guideline)
         }
     }
 
