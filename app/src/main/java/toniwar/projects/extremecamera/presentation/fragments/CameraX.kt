@@ -14,7 +14,7 @@ import toniwar.projects.extremecamera.App
 import toniwar.projects.extremecamera.Permissions
 import toniwar.projects.extremecamera.databinding.FragmentCameraXBinding
 import toniwar.projects.extremecamera.di.DaggerActivityComponent
-import toniwar.projects.extremecamera.domain.CameraRepository
+import toniwar.projects.extremecamera.domain.repositories.CameraRepository
 import toniwar.projects.extremecamera.presentation.FragmentListener
 import toniwar.projects.extremecamera.presentation.view_models.CameraViewModel
 import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric

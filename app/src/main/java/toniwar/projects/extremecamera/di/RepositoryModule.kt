@@ -2,8 +2,8 @@ package toniwar.projects.extremecamera.di
 
 import dagger.Binds
 import dagger.Module
-import toniwar.projects.extremecamera.data.CameraRepositoryImpl
-import toniwar.projects.extremecamera.domain.CameraRepository
+import toniwar.projects.extremecamera.data.repositories.CameraRepositoryImpl
+import toniwar.projects.extremecamera.domain.repositories.CameraRepository
 
 @Module
 interface RepositoryModule {

@@ -1,4 +1,4 @@
-package toniwar.projects.extremecamera.data
+package toniwar.projects.extremecamera.data.repositories
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -15,7 +15,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import toniwar.projects.extremecamera.Constants
-import toniwar.projects.extremecamera.domain.CameraRepository
+import toniwar.projects.extremecamera.domain.repositories.CameraRepository
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class CameraRepositoryImpl @Inject constructor(
     private val context: Context
     ):
-    CameraRepository{
+    CameraRepository {
 
     private lateinit var cameraController: LifecycleCameraController
 

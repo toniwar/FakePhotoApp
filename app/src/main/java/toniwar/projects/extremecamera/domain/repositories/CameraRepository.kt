@@ -1,4 +1,4 @@
-package toniwar.projects.extremecamera.domain
+package toniwar.projects.extremecamera.domain.repositories
 
 
 interface CameraRepository {

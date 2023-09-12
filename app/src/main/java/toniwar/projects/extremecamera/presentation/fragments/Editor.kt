@@ -56,8 +56,15 @@ class Editor : Fragment() {
         component.injectEditor(this)
         binding.photo.setImage(ImageSource.uri(path!!))
         Log.d("ImagePath", path!!)
-        binding.addElementButton.setOnClickListener {
-            vm.showMenu(binding.guideline)
+        binding.addElementButton.apply {
+            setOnClickListener {
+                vm.showMenu(binding.guideline)
+                vm.changeMenuButtonIcon {
+                    setImageResource(it)
+                    invalidate()
+                }
+            }
+
         }
     }
 
