@@ -15,11 +15,13 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import toniwar.projects.extremecamera.Constants
+import toniwar.projects.extremecamera.di.ActivityComponent
 import toniwar.projects.extremecamera.domain.repositories.CameraRepository
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 
+@ActivityComponent.Companion.ActivityComponentScope
 class CameraRepositoryImpl @Inject constructor(
     private val context: Context
     ):
@@ -35,15 +37,13 @@ class CameraRepositoryImpl @Inject constructor(
         (view as PreviewView).controller = cameraController
     }
 
-    override fun takePhoto(
-        imageUrl: (String)-> Unit
-    ){
+    override fun takePhoto(imgUri: (String) -> Unit) {
         val name = SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P){
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/ExtremeCamera-Image")
             }
         }
@@ -58,11 +58,14 @@ class CameraRepositoryImpl @Inject constructor(
         cameraController.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(context),
-            object : ImageCapture.OnImageSavedCallback{
+            object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exception: ImageCaptureException) {
-                    Log.e(Constants.TAG,
+                    Log.e(
+                        Constants.TAG,
                         "Photo capture failed: ${exception.message}",
-                        exception)
+                        exception
+                    )
+                    Toast.makeText(context, "${exception.message}", Toast.LENGTH_SHORT).show()
                 }
 
                 @SuppressLint("RestrictedApi")
@@ -70,7 +73,7 @@ class CameraRepositoryImpl @Inject constructor(
                     val msg = "Photo captured succeeded: ${outputFileResults.savedUri}"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     Log.d(Constants.TAG, msg)
-                    imageUrl.invoke(outputFileResults.savedUri.toString())
+                    imgUri.invoke(outputFileResults.savedUri.toString())
                 }
             }
         )

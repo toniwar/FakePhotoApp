@@ -1,17 +1,33 @@
 package toniwar.projects.extremecamera.data.repositories
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import toniwar.projects.extremecamera.data.network.ImagesLoader
+import toniwar.projects.extremecamera.domain.entities.NetworkResult
+import toniwar.projects.extremecamera.domain.entities.Samples
 import toniwar.projects.extremecamera.domain.repositories.DataRepository
+import javax.inject.Inject
 
-class DataRepositoryImpl: DataRepository {
-    override fun loadSamples() {
+class DataRepositoryImpl @Inject constructor(
+    private val imagesLoader: ImagesLoader
+): DataRepository {
+    override fun loadSamples(): Flow<NetworkResult>{
+        return flow{
+            val result = imagesLoader.getResult()
+            emit(result)
+        }
+
+    }
+
+    override fun saveSamplesInStorage(samples: Samples) {
         TODO("Not yet implemented")
     }
 
-    override fun saveSamplesInStorage() {
+    override fun <T> saveEditedImage(img: T) {
         TODO("Not yet implemented")
     }
 
-    override fun saveEditedImage() {
+    override fun <T> shareImage(img: T) {
         TODO("Not yet implemented")
     }
 }

@@ -13,6 +13,10 @@ class RetrofitBuilder @Inject constructor() {
             .build()
     }
 
+    val samplesService: Service by lazy {
+        retrofit.create(Service::class.java)
+    }
+
 
 
     companion object{

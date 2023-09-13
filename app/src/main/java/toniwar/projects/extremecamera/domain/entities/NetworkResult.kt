@@ -1,12 +1,12 @@
 package toniwar.projects.extremecamera.domain.entities
 
-import java.lang.Error
+
 import java.lang.Exception
 
 sealed interface NetworkResult
 
-class Success(val samples: Samples): NetworkResult
+class Success<T>(val samples: T): NetworkResult
 
-class Failure(val error: Error): NetworkResult
+class Failure(val errorCode: Int?, val errorMessage: String?): NetworkResult
 
 class NetworkException(val exception: Exception): NetworkResult
