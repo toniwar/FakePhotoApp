@@ -12,6 +12,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.davemorrissey.labs.subscaleview.ImageSource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import toniwar.projects.extremecamera.App
 import toniwar.projects.extremecamera.databinding.FragmentEditorBinding
@@ -41,10 +45,16 @@ class Editor : Fragment() {
         SamplesAdapter()
     }
 
+
     @Inject
     lateinit var fabric: ViewModelsFabric
     private val vm by lazy {
         ViewModelProvider(this, fabric)[EditorViewModel::class.java]
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
     }
 
 
@@ -64,31 +74,48 @@ class Editor : Fragment() {
         component.injectEditor(this)
         binding.photo.setImage(ImageSource.uri(path!!))
         Log.d("ImagePath", path!!)
-        vm.loadSamples()
+        binding.elementsRv.adapter = samplesAdapter
+
+
         binding.addElementButton.apply {
             setOnClickListener {
                 vm.showMenu(binding.guideline)
                 vm.changeMenuButtonIcon {
                     setImageResource(it)
-                    invalidate()
                 }
             }
 
         }
-        binding.elementsRv.adapter = samplesAdapter
-
-        lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                vm.samplesList.collect{samples->
-                    samples?.let {
-                        samplesAdapter.loadSamples(it.samples)
-
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                flow<Unit> {
+                    var callback = false
+                    while (!callback) {
+                        vm.connectionListener {
+                            callback = it
+                        }
+                        if (callback) {
+                            getSamplesList()
+                        }
+                        delay(3000)
                     }
-
-                }
+                }.collect()
             }
         }
+
     }
+
+    private suspend fun getSamplesList(){
+        vm.samplesList.collectLatest{samples->
+            samples?.let {
+                samplesAdapter.loadSamples(it.samples)
+
+            }
+
+        }
+
+    }
+
 
     companion object {
         const val URL_KEY = "Url"

@@ -2,11 +2,15 @@ package toniwar.projects.extremecamera.presentation.view_models
 
 import android.content.Context
 import android.content.res.Configuration
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import android.widget.Toast
 import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +40,9 @@ class EditorViewModel @Inject constructor(
     private val mutableSamplesList = MutableStateFlow<Samples?>(null)
 
     val samplesList:StateFlow<Samples?> get() = mutableSamplesList.asStateFlow()
+    private lateinit var job: CoroutineScope
+
+
 
 
 
@@ -65,7 +72,8 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun loadSamples(){
+    private fun loadSamples(){
+
         loadSamplesUseCase.loadSamples().onEach {result->
             when(result){
                 is Success<*> -> {
@@ -95,5 +103,34 @@ class EditorViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun connectionListener(callback:(Boolean)->Unit){
+
+        if(checkForConnection()){
+            loadSamples()
+            callback.invoke(true)
+        }
+        else callback.invoke(false)
+
+    }
+
+
+
+    private fun checkForConnection(): Boolean{
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val network = connectivityManager.activeNetwork?: return false
+
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network)?: return false
+
+        return when{
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            else -> false
+        }
+    }
+
+    override fun onCleared() {
+        job.cancel()
+    }
 }
 

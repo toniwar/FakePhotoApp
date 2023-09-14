@@ -30,6 +30,7 @@ class SamplesAdapter
     }
 
     fun loadSamples(inputList: List<SampleImage>){
+        samples.clear()
         inputList.forEach {
             samples.add(it)
         }
