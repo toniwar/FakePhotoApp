@@ -10,6 +10,7 @@ class SamplesAdapter
     : RecyclerView.Adapter<SampleImageHolder>() {
 
     private val samples = mutableListOf<SampleImage>()
+    var itemListener: ((SampleImage)->Unit)? = null
 
 
 
@@ -27,6 +28,9 @@ class SamplesAdapter
     override fun onBindViewHolder(holder: SampleImageHolder, position: Int) {
         val item = samples[position]
         holder.bind(item)
+        holder.itemView.setOnClickListener{
+            itemListener?.invoke(item)
+        }
     }
 
     fun loadSamples(inputList: List<SampleImage>){

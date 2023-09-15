@@ -2,20 +2,26 @@ package toniwar.projects.extremecamera.presentation.view_models
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import toniwar.projects.extremecamera.R
 import toniwar.projects.extremecamera.domain.entities.Failure
 import toniwar.projects.extremecamera.domain.entities.NetworkException
@@ -40,12 +46,10 @@ class EditorViewModel @Inject constructor(
     private val mutableSamplesList = MutableStateFlow<Samples?>(null)
 
     val samplesList:StateFlow<Samples?> get() = mutableSamplesList.asStateFlow()
-    private lateinit var job: CoroutineScope
 
-
-
-
-
+    private val configuration by lazy {
+        context.resources.configuration
+    }
 
     fun showMenu(guideline: Guideline){
         ClipArtMenu.menu(guideline){
@@ -55,12 +59,54 @@ class EditorViewModel @Inject constructor(
 
     }
 
-    fun changeMenuButtonIcon(icon: (Int) -> Unit){
-        icon.invoke(getIcon(context.resources.configuration, isVisibleMenu))
+    fun rotateImageView(view: View){
+        if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+            view.apply {
+                rotation = 90f
+                scaleY = 2f
+                scaleX = 2f
+                invalidate()
+            }
+        }
 
     }
 
-    private fun getIcon(configuration: Configuration, visible: Boolean): Int{
+    fun inlineImage(view: ViewGroup, img: String){
+
+
+        val imgView = ImageView(context)
+        Glide.with(context)
+            .load(img)
+            .centerCrop()
+            .into(imgView)
+        view.addView(imgView)
+        imgView.apply {
+            layoutParams = FrameLayout.LayoutParams(view.width, view.height)
+
+        }
+
+
+    }
+
+    private suspend fun getBitmap(uri: String): Bitmap{
+
+            return withContext(Dispatchers.IO) {
+                Glide.with(context)
+                    .asBitmap()
+                    .load(uri)
+                    .submit(100, 100)
+                    .get()
+            }
+
+    }
+
+
+    fun changeMenuButtonIcon(icon: (Int) -> Unit){
+        icon.invoke(getIcon(isVisibleMenu))
+
+    }
+
+    private fun getIcon(visible: Boolean): Int{
         return if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             if(visible) R.drawable.baseline_keyboard_arrow_right_24
             else R.drawable.baseline_keyboard_arrow_left_24
@@ -114,7 +160,6 @@ class EditorViewModel @Inject constructor(
     }
 
 
-
     private fun checkForConnection(): Boolean{
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -129,8 +174,6 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        job.cancel()
-    }
+
 }
 

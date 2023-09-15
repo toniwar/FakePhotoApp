@@ -72,9 +72,17 @@ class Editor : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         component.injectEditor(this)
-        binding.photo.setImage(ImageSource.uri(path!!))
+
+        binding.apply {
+            photo.setImage(ImageSource.uri(path!!))
+            vm.rotateImageView(photo)
+
+        }
         Log.d("ImagePath", path!!)
         binding.elementsRv.adapter = samplesAdapter
+        samplesAdapter.itemListener = {
+            vm.inlineImage(binding.containerLayout, it.img)
+        }
 
 
         binding.addElementButton.apply {

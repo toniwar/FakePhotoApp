@@ -8,5 +8,6 @@
     <color name="menu_top_background_color">#FFB0C4DE</color>
     <color name="menu_bottom_background_color">#FF808080</color>
     <color name="menu_icons_color">#FFFFF5EE</color>
+    <color name="border_color">#ff00ff00</color>
 
 </resources>
