@@ -4,14 +4,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import toniwar.projects.extremecamera.data.network.ImagesLoader
 import toniwar.projects.extremecamera.domain.entities.NetworkResult
-import toniwar.projects.extremecamera.domain.entities.Samples
+import toniwar.projects.extremecamera.domain.entities.ClipArts
 import toniwar.projects.extremecamera.domain.repositories.DataRepository
 import javax.inject.Inject
 
 class DataRepositoryImpl @Inject constructor(
     private val imagesLoader: ImagesLoader
 ): DataRepository {
-    override fun loadSamples(): Flow<NetworkResult>{
+    override fun loadClipArts(): Flow<NetworkResult>{
         return flow{
             val result = imagesLoader.getResult()
             emit(result)
@@ -19,7 +19,7 @@ class DataRepositoryImpl @Inject constructor(
 
     }
 
-    override fun saveSamplesInStorage(samples: Samples) {
+    override fun saveClipArtsInStorage(clipArts: ClipArts) {
         TODO("Not yet implemented")
     }
 

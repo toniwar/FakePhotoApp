@@ -14,7 +14,7 @@ class ImagesLoader @Inject constructor(
 
 
     suspend fun getResult() : NetworkResult{
-        val result = retrofitBuilder.samplesService.loadSamples()
+        val result = retrofitBuilder.samplesService.loadClipArts()
 
         val responseBody = result.body()
 

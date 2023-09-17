@@ -23,41 +23,82 @@
           android:layout_height="match_parent"
           />
 
+
+
    </FrameLayout>
 
+   <androidx.constraintlayout.widget.Guideline
+       android:id="@+id/line_right"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       app:layout_constraintGuide_percent="1.0" />
 
+   <androidx.constraintlayout.widget.Guideline
+       android:id="@+id/line_left"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       app:layout_constraintGuide_percent="0.0" />
 
 
    <androidx.constraintlayout.widget.Guideline
-       android:id="@+id/guideline"
+       android:id="@+id/line_1"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       app:layout_constraintGuide_percent="1.0" />
+
+   <androidx.constraintlayout.widget.Guideline
+       android:id="@+id/line_2"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:orientation="horizontal"
        app:layout_constraintGuide_percent="1.0" />
 
    <androidx.appcompat.widget.AppCompatImageButton
-       android:id="@+id/add_element_button"
+       android:id="@+id/open_clip_arts_button"
        android:layout_width="0dp"
        android:layout_height="40dp"
        android:alpha="0.5"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintBottom_toTopOf="@id/guideline"
-       android:src="@drawable/baseline_keyboard_arrow_up_24"
+       app:layout_constraintEnd_toStartOf="@id/line_right"
+       app:layout_constraintBottom_toTopOf="@id/line_1"
+       android:src="@drawable/baseline_menu_24"
+
        />
 
    <androidx.recyclerview.widget.RecyclerView
-       android:id="@+id/elements_rv"
+       android:id="@+id/clip_arts_rv"
        android:layout_width="0dp"
        android:layout_height="0dp"
-       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintStart_toEndOf="@id/line_right"
        app:layout_constraintBottom_toBottomOf="parent"
        app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintTop_toBottomOf="@id/guideline"
+       app:layout_constraintTop_toBottomOf="@id/line_1"
        android:background="@color/add_button_color"
        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
        app:spanCount="3"
-       tools:listitem="@layout/sample_image_card"
+       tools:listitem="@layout/clip_art_image_card"
+       />
+
+   <androidx.appcompat.widget.AppCompatImageButton
+       android:id="@+id/tools_button"
+       android:layout_width="0dp"
+       android:layout_height="40dp"
+       android:alpha="0.5"
+       app:layout_constraintStart_toEndOf="@id/line_left"
+       app:layout_constraintBottom_toTopOf="@id/line_2"
+       android:src="@drawable/tools"
+
+       />
+
+   <toniwar.projects.extremecamera.presentation.ClipArtViewController
+       android:layout_width="0dp"
+       android:layout_height="0dp"
+       app:layout_constraintEnd_toStartOf="@id/line_left"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintTop_toBottomOf="@id/line_2"
        />
 
 

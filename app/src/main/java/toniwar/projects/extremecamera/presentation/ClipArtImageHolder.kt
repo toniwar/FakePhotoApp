@@ -6,22 +6,22 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import toniwar.projects.extremecamera.R
-import toniwar.projects.extremecamera.databinding.SampleImageCardBinding
-import toniwar.projects.extremecamera.domain.entities.SampleImage
+import toniwar.projects.extremecamera.databinding.ClipArtImageCardBinding
+import toniwar.projects.extremecamera.domain.entities.ClipArt
 import java.io.IOException
 
-class SampleImageHolder(
+class ClipArtImageHolder(
     view: View
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding by lazy {
-        SampleImageCardBinding.bind(view)
+        ClipArtImageCardBinding.bind(view)
     }
 
     @SuppressLint("SetTextI18n")
-    fun bind(item: SampleImage) = with(binding){
-        getImage(item.img, sampleImg)
-        sampleTitle.text = "${item.id}: ${item.title}"
+    fun bind(item: ClipArt) = with(binding){
+        getImage(item.img, clipArtImg)
+        clipArtTitle.text = "${item.id}: ${item.title}"
 
     }
 

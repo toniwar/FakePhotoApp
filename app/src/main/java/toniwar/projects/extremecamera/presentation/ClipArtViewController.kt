@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import toniwar.projects.extremecamera.R
-import toniwar.projects.extremecamera.databinding.SampleImageViewControllerBinding
 
-class ImageViewController @JvmOverloads constructor(
+
+class ClipArtViewController @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null
 
@@ -15,28 +15,23 @@ class ImageViewController @JvmOverloads constructor(
         initializeView()
     }
 
-    private val binding by lazy{
-        SampleImageViewControllerBinding
-            .bind(this)
-    }
 
-    private var sampleView: SampleImageView? = null
+
+    private var clipArtView: ClipArtView? = null
 
     private var isLocked = true
 
     private fun initializeView(){
-        inflate(context, R.layout.sample_image_view_controller, this)
+        inflate(context, R.layout.clip_art_view_controller, this)
 
     }
 
-    fun setSampleView(view: SampleImageView){
-        sampleView = view
+    fun setSampleView(view: ClipArtView){
+        clipArtView = view
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        binding.apply {
 
-        }
     }
 }

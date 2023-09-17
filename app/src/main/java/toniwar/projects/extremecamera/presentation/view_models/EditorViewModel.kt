@@ -22,14 +22,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import toniwar.projects.extremecamera.R
 import toniwar.projects.extremecamera.domain.entities.Failure
 import toniwar.projects.extremecamera.domain.entities.NetworkException
-import toniwar.projects.extremecamera.domain.entities.Samples
+import toniwar.projects.extremecamera.domain.entities.ClipArts
 import toniwar.projects.extremecamera.domain.entities.Success
 import toniwar.projects.extremecamera.domain.repositories.DataRepository
-import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.LoadSamplesUseCase
-import toniwar.projects.extremecamera.presentation.ClipArtMenu
+import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.LoadClipArtsUseCase
+import toniwar.projects.extremecamera.presentation.EditorMenu
 import javax.inject.Inject
 
 class EditorViewModel @Inject constructor(
@@ -37,25 +36,23 @@ class EditorViewModel @Inject constructor(
     private val dataRepository: DataRepository,
 ): ViewModel() {
 
-    private var isVisibleMenu = false
+    private var clipArtsListVisibility = false
+    private var toolsVisibility = false
 
-    private val loadSamplesUseCase by lazy {
-        LoadSamplesUseCase(dataRepository)
+    private val loadClipArtsUseCase by lazy {
+        LoadClipArtsUseCase(dataRepository)
     }
 
-    private val mutableSamplesList = MutableStateFlow<Samples?>(null)
+    private val mutableClipArtsList = MutableStateFlow<ClipArts?>(null)
 
-    val samplesList:StateFlow<Samples?> get() = mutableSamplesList.asStateFlow()
+    val clipArtsList:StateFlow<ClipArts?> get() = mutableClipArtsList.asStateFlow()
 
     private val configuration by lazy {
         context.resources.configuration
     }
 
-    fun showMenu(guideline: Guideline){
-        ClipArtMenu.menu(guideline){
-            isVisibleMenu = it
-
-        }
+    fun showMenu(guideline: List<Guideline>, menuType: EditorMenu.MenuTypes ){
+        EditorMenu.menu(guideline, menuType)
 
     }
 
@@ -101,30 +98,14 @@ class EditorViewModel @Inject constructor(
     }
 
 
-    fun changeMenuButtonIcon(icon: (Int) -> Unit){
-        icon.invoke(getIcon(isVisibleMenu))
 
-    }
+    private fun loadClipArts(){
 
-    private fun getIcon(visible: Boolean): Int{
-        return if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            if(visible) R.drawable.baseline_keyboard_arrow_right_24
-            else R.drawable.baseline_keyboard_arrow_left_24
-        }
-
-        else{
-            if(visible) R.drawable.baseline_keyboard_arrow_down_24
-            else R.drawable.baseline_keyboard_arrow_up_24
-        }
-    }
-
-    private fun loadSamples(){
-
-        loadSamplesUseCase.loadSamples().onEach {result->
+        loadClipArtsUseCase.loadSamples().onEach { result->
             when(result){
                 is Success<*> -> {
-                    if(result.samples is Samples)
-                        mutableSamplesList.value = result.samples
+                    if(result.clipArts is ClipArts)
+                        mutableClipArtsList.value = result.clipArts
                 }
 
                 is Failure -> {
@@ -152,7 +133,7 @@ class EditorViewModel @Inject constructor(
     fun connectionListener(callback:(Boolean)->Unit){
 
         if(checkForConnection()){
-            loadSamples()
+            loadClipArts()
             callback.invoke(true)
         }
         else callback.invoke(false)

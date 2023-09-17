@@ -3,7 +3,7 @@ package toniwar.projects.extremecamera.presentation
 import android.content.Context
 
 
-class SampleImageView(
+class ClipArtView(
     context: Context
 ): androidx.appcompat.widget.AppCompatImageView(context) {
 

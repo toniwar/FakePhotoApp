@@ -2,14 +2,14 @@ package toniwar.projects.extremecamera.domain.repositories
 
 import kotlinx.coroutines.flow.Flow
 import toniwar.projects.extremecamera.domain.entities.NetworkResult
-import toniwar.projects.extremecamera.domain.entities.Samples
+import toniwar.projects.extremecamera.domain.entities.ClipArts
 
 
 interface DataRepository {
 
-    fun loadSamples(): Flow<NetworkResult>
+    fun loadClipArts(): Flow<NetworkResult>
 
-    fun saveSamplesInStorage(samples: Samples)
+    fun saveClipArtsInStorage(clipArts: ClipArts)
 
     fun <T> saveEditedImage(img: T)
 

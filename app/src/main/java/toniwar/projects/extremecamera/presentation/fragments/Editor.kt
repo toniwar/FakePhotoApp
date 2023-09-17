@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 import toniwar.projects.extremecamera.App
 import toniwar.projects.extremecamera.databinding.FragmentEditorBinding
 import toniwar.projects.extremecamera.di.DaggerActivityComponent
-import toniwar.projects.extremecamera.presentation.SamplesAdapter
+import toniwar.projects.extremecamera.presentation.ClipArtsRVAdapter
+import toniwar.projects.extremecamera.presentation.EditorMenu
 import toniwar.projects.extremecamera.presentation.view_models.EditorViewModel
 import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric
 import javax.inject.Inject
@@ -31,6 +32,7 @@ class Editor : Fragment() {
 
     private val binding by lazy {
         FragmentEditorBinding.inflate(layoutInflater)
+
     }
 
     private val mainComponent by lazy {
@@ -41,8 +43,14 @@ class Editor : Fragment() {
         DaggerActivityComponent.factory().create(mainComponent)
     }
 
-    private val samplesAdapter by lazy {
-        SamplesAdapter()
+    private val clipArtsRVAdapter by lazy {
+        ClipArtsRVAdapter()
+    }
+
+    private val guideLinesSet by lazy {
+        with(binding) {
+            listOf(lineRight, lineLeft, line1, line2)
+        }
     }
 
 
@@ -52,10 +60,6 @@ class Editor : Fragment() {
         ViewModelProvider(this, fabric)[EditorViewModel::class.java]
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
 
     override fun onCreateView(
@@ -63,7 +67,7 @@ class Editor : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         arguments?.let {
-            path = it.getString(URL_KEY)
+            path = it.getString(URI_KEY)
         }
         return binding.root
     }
@@ -79,18 +83,21 @@ class Editor : Fragment() {
 
         }
         Log.d("ImagePath", path!!)
-        binding.elementsRv.adapter = samplesAdapter
-        samplesAdapter.itemListener = {
+        binding.clipArtsRv.adapter = clipArtsRVAdapter
+        clipArtsRVAdapter.itemListener = {
             vm.inlineImage(binding.containerLayout, it.img)
         }
 
 
-        binding.addElementButton.apply {
-            setOnClickListener {
-                vm.showMenu(binding.guideline)
-                vm.changeMenuButtonIcon {
-                    setImageResource(it)
-                }
+
+
+        binding.apply {
+            openClipArtsButton.setOnClickListener {
+                vm.showMenu(guideLinesSet, EditorMenu.MenuTypes.CLIP_ARTS_LIST)
+
+            }
+            toolsButton.setOnClickListener {
+                vm.showMenu(guideLinesSet, EditorMenu.MenuTypes.TOOLS)
             }
 
         }
@@ -114,9 +121,10 @@ class Editor : Fragment() {
     }
 
     private suspend fun getSamplesList(){
-        vm.samplesList.collectLatest{samples->
-            samples?.let {
-                samplesAdapter.loadSamples(it.samples)
+        vm.clipArtsList.collectLatest{ clipArts->
+            clipArts?.let {
+                //Toast.makeText(context, "That's ok", Toast.LENGTH_SHORT).show()
+                clipArtsRVAdapter.loadClipArts(it.clipArtsList)
 
             }
 
@@ -126,10 +134,10 @@ class Editor : Fragment() {
 
 
     companion object {
-        const val URL_KEY = "Url"
+        const val URI_KEY = "Uri"
         fun newInstance(arg: String? = null) = Editor().apply {
             arguments = Bundle().apply {
-                putString(URL_KEY, arg)
+                putString(URI_KEY, arg)
             }
         }
 

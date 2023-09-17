@@ -12,7 +12,7 @@
         >
 
         <ImageView
-            android:id="@+id/sample_img"
+            android:id="@+id/clip_art_img"
             android:layout_width="80dp"
             android:layout_height="80dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -20,13 +20,13 @@
             app:layout_constraintTop_toTopOf="parent"
             />
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/sample_title"
+            android:id="@+id/clip_art_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sample_img"
+            app:layout_constraintTop_toBottomOf="@id/clip_art_img"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

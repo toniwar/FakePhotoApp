@@ -2,7 +2,7 @@ package toniwar.projects.extremecamera.domain.entities
 
 import com.google.gson.annotations.SerializedName
 
-data class Samples(
+data class ClipArts(
     @field:SerializedName("samples")
-    val samples: List<SampleImage>
+    val clipArtsList: List<ClipArt>
 )
