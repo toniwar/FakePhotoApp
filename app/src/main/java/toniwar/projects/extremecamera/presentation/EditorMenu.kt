@@ -9,10 +9,20 @@ object EditorMenu {
 
     private var clipArtsRVVisibility = false
     private var toolsVisibility = false
-    private var rightLinePercent = 1f
-    private var leftLinePercent = 0f
+    private var rightLinePercent = 0.90f
+    private var leftLinePercent = 0.10f
     private var bottomLine1Percent = 1f
     private var bottomLine2Percent = 1f
+
+
+    fun resetValues(){
+        clipArtsRVVisibility = false
+        toolsVisibility = false
+        rightLinePercent = 0.90f
+        leftLinePercent = 0.10f
+        bottomLine1Percent = 1f
+        bottomLine2Percent = 1f
+    }
 
 
     fun menu(guidelines: List<Guideline>, action: MenuTypes) {
@@ -70,15 +80,16 @@ object EditorMenu {
             .forEach{propertyList.add(setAnimatorHolder(it.key, isOpen))
         }
 
-        val animator = ValueAnimator().apply {
+
+        ValueAnimator().apply {
             duration = 300
             interpolator = LinearInterpolator()
-            propertyList.forEachIndexed { i, p ->
-                values[i] = p
-            }
+            setValues(*propertyList.toTypedArray())
+
             addUpdateListener {
                 guidelines.forEachIndexed {i, p ->
-                    p.setGuidelinePercent(getAnimatedValue(propertyList[i].propertyName) as Float)
+                    p.setGuidelinePercent(
+                        getAnimatedValue(propertyList[i].propertyName) as Float)
                     p.invalidate()
                 }
             }
@@ -94,22 +105,26 @@ object EditorMenu {
         when (holderName) {
             RIGHT_LINE_ANIMATOR_HOLDER -> {
                 startValue = rightLinePercent
-                endValue = if (!visibility) 0.5f else 1.0f
+                endValue = if (visibility) 0.0f else 0.90f
+                rightLinePercent = endValue
             }
 
             LEFT_LINE_ANIMATOR_HOLDER -> {
                 startValue = leftLinePercent
-                endValue = if(!visibility) 0.5f else 0.0f
+                endValue = if(visibility) 1.0f else 0.10f
+                leftLinePercent = endValue
             }
 
             BOTTOM_LINE_1_ANIMATOR_HOLDER ->{
                 startValue = bottomLine1Percent
-                endValue = if (!visibility) 0.5f else 1.0f
+                endValue = if (visibility) 0.5f else 1.0f
+                bottomLine1Percent = endValue
             }
 
             BOTTOM_LINE_2_ANIMATOR_HOLDER ->{
                 startValue = bottomLine2Percent
-                endValue = if (!visibility) 0.3f else 1.0f
+                endValue = if (visibility) 0.7f else 1.0f
+                bottomLine2Percent = endValue
             }
 
         }

@@ -2,7 +2,7 @@ package toniwar.projects.extremecamera.presentation
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import toniwar.projects.extremecamera.R
 
 
@@ -10,7 +10,7 @@ class ClipArtViewController @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null
 
-): FrameLayout(context, attributeSet) {
+): LinearLayout(context, attributeSet) {
     init {
         initializeView()
     }
@@ -23,6 +23,7 @@ class ClipArtViewController @JvmOverloads constructor(
 
     private fun initializeView(){
         inflate(context, R.layout.clip_art_view_controller, this)
+        invalidate()
 
     }
 
@@ -30,8 +31,13 @@ class ClipArtViewController @JvmOverloads constructor(
         clipArtView = view
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     override fun onFinishInflate() {
         super.onFinishInflate()
+
 
     }
 }

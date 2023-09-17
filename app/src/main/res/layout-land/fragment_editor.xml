@@ -31,14 +31,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="1.0" />
+        app:layout_constraintGuide_percent="0.9" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.0" />
+        app:layout_constraintGuide_percent="0.10" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_1"
@@ -55,11 +55,12 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/open_clip_arts_button"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:alpha="0.5"
         app:layout_constraintBottom_toTopOf="@id/line_1"
-        app:layout_constraintEnd_toStartOf="@id/line_right"
+        app:layout_constraintStart_toStartOf="@id/line_right"
+        app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/baseline_menu_24"
         />
 
@@ -73,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/line_1"
         android:background="@color/add_button_color"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3"
+        app:spanCount="5"
         tools:listitem="@layout/clip_art_image_card"
         />
 
@@ -82,7 +83,8 @@
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:alpha="0.5"
-        app:layout_constraintStart_toEndOf="@id/line_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/line_left"
         app:layout_constraintBottom_toTopOf="@id/line_2"
         android:src="@drawable/tools"
 
@@ -93,8 +95,9 @@
         android:layout_height="0dp"
         app:layout_constraintEnd_toStartOf="@id/line_left"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line_2"
+        android:background="@color/add_button_color"
         />
 
 

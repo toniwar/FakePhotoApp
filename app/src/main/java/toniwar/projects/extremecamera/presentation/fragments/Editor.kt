@@ -66,6 +66,7 @@ class Editor : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        EditorMenu.resetValues()
         arguments?.let {
             path = it.getString(URI_KEY)
         }

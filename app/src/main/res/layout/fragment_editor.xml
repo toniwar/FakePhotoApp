@@ -32,14 +32,14 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:orientation="vertical"
-       app:layout_constraintGuide_percent="1.0" />
+       app:layout_constraintGuide_percent="0.90" />
 
    <androidx.constraintlayout.widget.Guideline
        android:id="@+id/line_left"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:orientation="vertical"
-       app:layout_constraintGuide_percent="0.0" />
+       app:layout_constraintGuide_percent="0.10" />
 
 
    <androidx.constraintlayout.widget.Guideline
@@ -61,7 +61,8 @@
        android:layout_width="0dp"
        android:layout_height="40dp"
        android:alpha="0.5"
-       app:layout_constraintEnd_toStartOf="@id/line_right"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toEndOf="@id/line_right"
        app:layout_constraintBottom_toTopOf="@id/line_1"
        android:src="@drawable/baseline_menu_24"
 
@@ -86,7 +87,8 @@
        android:layout_width="0dp"
        android:layout_height="40dp"
        android:alpha="0.5"
-       app:layout_constraintStart_toEndOf="@id/line_left"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toStartOf="@id/line_left"
        app:layout_constraintBottom_toTopOf="@id/line_2"
        android:src="@drawable/tools"
 
@@ -97,8 +99,9 @@
        android:layout_height="0dp"
        app:layout_constraintEnd_toStartOf="@id/line_left"
        app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintTop_toBottomOf="@id/line_2"
+       android:background="@color/add_button_color"
        />
 
 
