@@ -16,69 +16,73 @@ object EditorMenu {
 
 
     fun menu(guidelines: List<Guideline>, action: MenuTypes) {
-        menuAnimation(guidelines, action)
-
-    }
-
-    private fun menuAnimation(guidelines: List<Guideline>, action: MenuTypes) {
-
 
         when (action) {
             MenuTypes.TOOLS -> {
-
                 toolsVisibility = !toolsVisibility
+                startAnimation(hashMapOf(
+                    LEFT_LINE_ANIMATOR_HOLDER to guidelines[1],
+                    BOTTOM_LINE_2_ANIMATOR_HOLDER to guidelines[3]
+                    ),
+                    toolsVisibility)
                 clipArtsRVVisibility = false
+
+                startAnimation(hashMapOf(
+                    RIGHT_LINE_ANIMATOR_HOLDER to guidelines[0],
+                    BOTTOM_LINE_1_ANIMATOR_HOLDER to guidelines[2]
+                ),
+                    clipArtsRVVisibility)
             }
 
             MenuTypes.CLIP_ARTS_LIST -> {
                 clipArtsRVVisibility = !clipArtsRVVisibility
+
+                startAnimation(hashMapOf(
+                    RIGHT_LINE_ANIMATOR_HOLDER to guidelines[0],
+                    BOTTOM_LINE_1_ANIMATOR_HOLDER to guidelines[2]
+                ),
+                    clipArtsRVVisibility)
+
                 toolsVisibility = false
+
+                startAnimation(hashMapOf(
+                    LEFT_LINE_ANIMATOR_HOLDER to guidelines[1],
+                    BOTTOM_LINE_2_ANIMATOR_HOLDER to guidelines[3]
+                ),
+                    toolsVisibility)
 
             }
         }
 
 
-        val rightLineAnimatorHolder = setAnimatorHolder(RIGHT_LINE_ANIMATOR_HOLDER,
-            clipArtsRVVisibility)
+    }
 
-        val leftLineAnimatorHolder = setAnimatorHolder(LEFT_LINE_ANIMATOR_HOLDER,
-            toolsVisibility)
+    private fun startAnimation(
 
-        val bottomLine1AnimatorHolder = setAnimatorHolder(
-            BOTTOM_LINE_1_ANIMATOR_HOLDER, clipArtsRVVisibility)
+        guidelinesHashMap: HashMap<String, Guideline>,
+        isOpen: Boolean
 
-        val bottomLine2AnimatorHolder = setAnimatorHolder(
-            BOTTOM_LINE_2_ANIMATOR_HOLDER, toolsVisibility)
-
+    ){
+        val guidelines: MutableList<Guideline>  = mutableListOf()
+        guidelinesHashMap.forEach { guidelines.add(it.value) }
+        val propertyList: MutableList<PropertyValuesHolder> = mutableListOf()
+        guidelinesHashMap
+            .forEach{propertyList.add(setAnimatorHolder(it.key, isOpen))
+        }
 
         val animator = ValueAnimator().apply {
             duration = 300
             interpolator = LinearInterpolator()
-
-            setValues(
-                rightLineAnimatorHolder,
-                leftLineAnimatorHolder,
-                bottomLine1AnimatorHolder,
-                bottomLine2AnimatorHolder
-            )
-            addUpdateListener {
-                rightLinePercent = getAnimatedValue(RIGHT_LINE_ANIMATOR_HOLDER) as Float
-                guidelines[0].setGuidelinePercent(rightLinePercent)
-                leftLinePercent = getAnimatedValue(LEFT_LINE_ANIMATOR_HOLDER) as Float
-                guidelines[1].setGuidelinePercent(leftLinePercent)
-                bottomLine1Percent = getAnimatedValue(BOTTOM_LINE_1_ANIMATOR_HOLDER) as Float
-                guidelines[2].setGuidelinePercent(bottomLine1Percent)
-                bottomLine2Percent = getAnimatedValue(BOTTOM_LINE_2_ANIMATOR_HOLDER) as Float
-                guidelines[3].setGuidelinePercent(bottomLine2Percent)
-
-                guidelines.map { it.invalidate() }
-
+            propertyList.forEachIndexed { i, p ->
+                values[i] = p
             }
-
-        }
-        animator.start()
-
-
+            addUpdateListener {
+                guidelines.forEachIndexed {i, p ->
+                    p.setGuidelinePercent(getAnimatedValue(propertyList[i].propertyName) as Float)
+                    p.invalidate()
+                }
+            }
+        }.start()
     }
 
     private fun setAnimatorHolder(
