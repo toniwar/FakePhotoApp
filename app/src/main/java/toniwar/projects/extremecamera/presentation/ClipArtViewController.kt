@@ -82,24 +82,24 @@ class ClipArtViewController @JvmOverloads constructor(
             clipArtView?.let {
                 when(btn){
                     rightButton -> {
-                        if(isLocked) it.move(50f,-0f)
+                        if(isLocked) it.move(10f,0f)
                         else it.changeScale(0.1f,0f)
 
                     }
 
                     leftButton -> {
-                        if(isLocked) it.move(-50f,0f)
+                        if(isLocked) it.move(-10f,0f)
                         else it.changeScale(-0.1f,0f)
 
                     }
 
                     upButton -> {
-                        if(isLocked) it.move(0f,-50f)
+                        if(isLocked) it.move(0f,-10f)
                         else it.changeScale(0f,-0.1f)
                     }
 
                     downButton ->{
-                        if(isLocked) it.move(0f,50f)
+                        if(isLocked) it.move(0f,10f)
                         else it.changeScale(0f, 0.1f)
 
                     }

@@ -1,5 +1,6 @@
 package toniwar.projects.extremecamera.presentation
 
+
 import android.content.Context
 import android.widget.FrameLayout
 
@@ -7,6 +8,7 @@ import android.widget.FrameLayout
 class ClipArtView(
     context: Context
 ): androidx.appcompat.widget.AppCompatImageView(context) {
+
     init {
         layoutParams = FrameLayout.LayoutParams(width, height)
     }
@@ -14,10 +16,10 @@ class ClipArtView(
 
 
     fun move(newX: Float, newY: Float){
-
         x += newX
         y += newY
         invalidate()
+
     }
 
 
@@ -36,6 +38,6 @@ class ClipArtView(
         val oldScaleY = scaleY
         scaleY = oldScaleY + h
     }
-    
+
 }
 

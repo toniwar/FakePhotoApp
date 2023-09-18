@@ -6,7 +6,7 @@ import toniwar.projects.extremecamera.domain.repositories.DataRepository
 
 class LoadClipArtsUseCase(private val repository: DataRepository) {
 
-    fun loadSamples(): Flow<NetworkResult> {
+    fun loadClipArts(): Flow<NetworkResult> {
         return repository.loadClipArts()
     }
 

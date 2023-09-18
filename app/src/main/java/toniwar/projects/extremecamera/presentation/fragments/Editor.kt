@@ -113,8 +113,12 @@ class Editor : Fragment() {
             toolsButton.setOnClickListener {
                 vm.showMenu(guideLinesSet, EditorMenu.MenuTypes.TOOLS)
             }
+            saveImageButton.setOnClickListener {
+                vm.saveImage(containerLayout)
+            }
 
         }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 flow<Unit> {

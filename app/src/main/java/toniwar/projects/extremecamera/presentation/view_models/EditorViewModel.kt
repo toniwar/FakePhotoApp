@@ -2,10 +2,10 @@ package toniwar.projects.extremecamera.presentation.view_models
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -14,19 +14,19 @@ import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
 import toniwar.projects.extremecamera.domain.entities.Failure
 import toniwar.projects.extremecamera.domain.entities.NetworkException
 import toniwar.projects.extremecamera.domain.entities.ClipArts
 import toniwar.projects.extremecamera.domain.entities.Success
 import toniwar.projects.extremecamera.domain.repositories.DataRepository
+import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.GetBitmapUseCase
 import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.LoadClipArtsUseCase
+import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.SaveEditedImageUseCase
 import toniwar.projects.extremecamera.presentation.ClipArtView
 import toniwar.projects.extremecamera.presentation.ClipArtViewController
 import toniwar.projects.extremecamera.presentation.EditorMenu
@@ -42,13 +42,19 @@ class EditorViewModel @Inject constructor(
         LoadClipArtsUseCase(dataRepository)
     }
 
+    private val saveEditedImageUseCase by lazy {
+        SaveEditedImageUseCase(dataRepository)
+    }
+
+    private val getBitmapUseCase by lazy {
+        GetBitmapUseCase(dataRepository)
+    }
+
     private val mutableClipArtsList = MutableStateFlow<ClipArts?>(null)
 
     val clipArtsList:StateFlow<ClipArts?> get() = mutableClipArtsList.asStateFlow()
 
-    private val configuration by lazy {
-        context.resources.configuration
-    }
+
     @SuppressLint("StaticFieldLeak")
     private var clipArtView: ClipArtView? = null
 
@@ -65,7 +71,7 @@ class EditorViewModel @Inject constructor(
         clipArtView?.let {
             Glide.with(context)
                 .load(img)
-                .centerCrop()
+                .centerInside()
                 .into(it)
             view.addView(it)
             it.layoutParams = FrameLayout.LayoutParams(view.width, view.height)
@@ -92,23 +98,20 @@ class EditorViewModel @Inject constructor(
             .into(view)
     }
 
-    private suspend fun getBitmap(uri: String): Bitmap{
 
-            return withContext(Dispatchers.IO) {
-                Glide.with(context)
-                    .asBitmap()
-                    .load(uri)
-                    .submit(100, 100)
-                    .get()
-            }
+
+    fun saveImage(view: View){
+        val bitmap = getBitmapUseCase.getBitmap(view)
+        bitmap?.let {
+            saveEditedImageUseCase.saveEditedImage(bitmap)
+        }
 
     }
 
 
-
     private fun loadClipArts(){
 
-        loadClipArtsUseCase.loadSamples().onEach { result->
+        loadClipArtsUseCase.loadClipArts().onEach { result->
             when(result){
                 is Success<*> -> {
                     if(result.clipArts is ClipArts)

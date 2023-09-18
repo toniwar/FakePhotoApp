@@ -64,7 +64,6 @@ object EditorMenu {
             }
         }
 
-
     }
 
     private fun startAnimation(
@@ -135,7 +134,6 @@ object EditorMenu {
     enum class MenuTypes {
         TOOLS, CLIP_ARTS_LIST
     }
-
 
     private const val RIGHT_LINE_ANIMATOR_HOLDER = "right line_animator_holder"
     private const val LEFT_LINE_ANIMATOR_HOLDER = "left line animator holder"

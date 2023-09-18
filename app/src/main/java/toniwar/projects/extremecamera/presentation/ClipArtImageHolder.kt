@@ -28,7 +28,11 @@ class ClipArtImageHolder(
     private fun getImage(image: String, imageView: ImageView){
 
         try {
-            Glide.with(itemView.context).load(image).centerCrop().into(imageView)
+            Glide.with(itemView.context)
+                .load(image)
+                .error(R.drawable.baseline_image_not_supported_24)
+                .centerCrop()
+                .into(imageView)
         }
         catch (e: IOException){
             imageView.setImageResource(R.drawable.baseline_image_not_supported_24)
