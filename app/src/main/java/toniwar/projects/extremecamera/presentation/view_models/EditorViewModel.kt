@@ -1,12 +1,11 @@
 package toniwar.projects.extremecamera.presentation.view_models
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -28,6 +27,8 @@ import toniwar.projects.extremecamera.domain.entities.ClipArts
 import toniwar.projects.extremecamera.domain.entities.Success
 import toniwar.projects.extremecamera.domain.repositories.DataRepository
 import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.LoadClipArtsUseCase
+import toniwar.projects.extremecamera.presentation.ClipArtView
+import toniwar.projects.extremecamera.presentation.ClipArtViewController
 import toniwar.projects.extremecamera.presentation.EditorMenu
 import javax.inject.Inject
 
@@ -36,8 +37,6 @@ class EditorViewModel @Inject constructor(
     private val dataRepository: DataRepository,
 ): ViewModel() {
 
-    private var clipArtsListVisibility = false
-    private var toolsVisibility = false
 
     private val loadClipArtsUseCase by lazy {
         LoadClipArtsUseCase(dataRepository)
@@ -50,39 +49,47 @@ class EditorViewModel @Inject constructor(
     private val configuration by lazy {
         context.resources.configuration
     }
+    @SuppressLint("StaticFieldLeak")
+    private var clipArtView: ClipArtView? = null
 
     fun showMenu(guideline: List<Guideline>, menuType: EditorMenu.MenuTypes ){
         EditorMenu.menu(guideline, menuType)
 
     }
 
-    fun rotateImageView(view: View){
-        if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
-            view.apply {
-                rotation = 90f
-                scaleY = 2f
-                scaleX = 2f
-                invalidate()
-            }
+
+
+    fun inlineImage(view: ViewGroup, img: String, controller: ClipArtViewController){
+
+        clipArtView = ClipArtView(context)
+        clipArtView?.let {
+            Glide.with(context)
+                .load(img)
+                .centerCrop()
+                .into(it)
+            view.addView(it)
+            it.layoutParams = FrameLayout.LayoutParams(view.width, view.height)
+
+            controller.setSampleView(it)
+        }
+
+
+    }
+
+    fun removeClipArtView(view: ViewGroup){
+        clipArtView?.let {
+            clipArtView = null
+            view.removeView(it)
+            view.invalidate()
         }
 
     }
 
-    fun inlineImage(view: ViewGroup, img: String){
-
-
-        val imgView = ImageView(context)
+    fun setImage(view: ImageView, url: String){
         Glide.with(context)
-            .load(img)
+            .load(url)
             .centerCrop()
-            .into(imgView)
-        view.addView(imgView)
-        imgView.apply {
-            layoutParams = FrameLayout.LayoutParams(view.width, view.height)
-
-        }
-
-
+            .into(view)
     }
 
     private suspend fun getBitmap(uri: String): Bitmap{

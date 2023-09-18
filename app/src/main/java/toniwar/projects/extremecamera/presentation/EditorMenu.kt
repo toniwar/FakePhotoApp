@@ -123,7 +123,7 @@ object EditorMenu {
 
             BOTTOM_LINE_2_ANIMATOR_HOLDER ->{
                 startValue = bottomLine2Percent
-                endValue = if (visibility) 0.7f else 1.0f
+                endValue = if (visibility) 0.6f else 1.0f
                 bottomLine2Percent = endValue
             }
 

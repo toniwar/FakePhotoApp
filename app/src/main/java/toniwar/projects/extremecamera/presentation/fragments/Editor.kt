@@ -1,17 +1,19 @@
 package toniwar.projects.extremecamera.presentation.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -22,6 +24,7 @@ import toniwar.projects.extremecamera.databinding.FragmentEditorBinding
 import toniwar.projects.extremecamera.di.DaggerActivityComponent
 import toniwar.projects.extremecamera.presentation.ClipArtsRVAdapter
 import toniwar.projects.extremecamera.presentation.EditorMenu
+import toniwar.projects.extremecamera.presentation.FragmentListener
 import toniwar.projects.extremecamera.presentation.view_models.EditorViewModel
 import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric
 import javax.inject.Inject
@@ -29,6 +32,8 @@ import javax.inject.Inject
 
 class Editor : Fragment() {
     private var path: String? = null
+
+    private lateinit var listener: FragmentListener
 
     private val binding by lazy {
         FragmentEditorBinding.inflate(layoutInflater)
@@ -60,12 +65,20 @@ class Editor : Fragment() {
         ViewModelProvider(this, fabric)[EditorViewModel::class.java]
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is FragmentListener){
+            listener = context
+        }
+        else throw RuntimeException("Unknown element: $context")
+    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         EditorMenu.resetValues()
         arguments?.let {
             path = it.getString(URI_KEY)
@@ -79,14 +92,14 @@ class Editor : Fragment() {
         component.injectEditor(this)
 
         binding.apply {
-            photo.setImage(ImageSource.uri(path!!))
-            vm.rotateImageView(photo)
+            vm.setImage(photo, path?:"")
 
         }
         Log.d("ImagePath", path!!)
         binding.clipArtsRv.adapter = clipArtsRVAdapter
         clipArtsRVAdapter.itemListener = {
-            vm.inlineImage(binding.containerLayout, it.img)
+            vm.removeClipArtView(binding.containerLayout)
+            vm.inlineImage(binding.containerLayout, it.img, binding.controller)
         }
 
 
@@ -111,7 +124,7 @@ class Editor : Fragment() {
                             callback = it
                         }
                         if (callback) {
-                            getSamplesList()
+                            getClipArtsList()
                         }
                         delay(3000)
                     }
@@ -119,12 +132,20 @@ class Editor : Fragment() {
             }
         }
 
+        val onBackClick = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                listener.openFragment(FragmentListener.Companion.ActionFlag.CAMERA_X, null)
+
+            }
+        }
+        (requireActivity()).onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackClick)
+
     }
 
-    private suspend fun getSamplesList(){
+    private suspend fun getClipArtsList(){
         vm.clipArtsList.collectLatest{ clipArts->
             clipArts?.let {
-                //Toast.makeText(context, "That's ok", Toast.LENGTH_SHORT).show()
                 clipArtsRVAdapter.loadClipArts(it.clipArtsList)
 
             }

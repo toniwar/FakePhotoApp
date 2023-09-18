@@ -1,11 +1,16 @@
 package toniwar.projects.extremecamera.presentation
 
 import android.content.Context
+import android.widget.FrameLayout
 
 
 class ClipArtView(
     context: Context
 ): androidx.appcompat.widget.AppCompatImageView(context) {
+    init {
+        layoutParams = FrameLayout.LayoutParams(width, height)
+    }
+
 
 
     fun move(newX: Float, newY: Float){
@@ -15,20 +20,7 @@ class ClipArtView(
         invalidate()
     }
 
-    fun changeScale(newScale: Float, pivot: PivotType){
 
-        when(pivot){
-            PivotType.PIVOT_X -> scaleX += newScale
-            PivotType.PIVOT_Y -> scaleY += newScale
-            PivotType.BOTH_PIVOTS ->{
-                scaleX += newScale
-                scaleY += newScale
-            }
-        }
-        invalidate()
-
-
-    }
 
     fun changeOpacity(newAlpha: Float){
 
@@ -37,11 +29,13 @@ class ClipArtView(
 
     }
 
-    companion object{
+    fun changeScale(w: Float, h: Float){
+        val oldScaleX = scaleX
+        scaleX = oldScaleX + w
 
-        enum class PivotType(){
-            PIVOT_X, PIVOT_Y, BOTH_PIVOTS
-        }
+        val oldScaleY = scaleY
+        scaleY = oldScaleY + h
     }
-
+    
 }
+
