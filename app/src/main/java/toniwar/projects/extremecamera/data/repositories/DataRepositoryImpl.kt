@@ -1,6 +1,8 @@
 package toniwar.projects.extremecamera.data.repositories
 
+import android.app.Activity
 import android.graphics.Bitmap
+import android.net.Uri
 import android.view.View
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -30,12 +32,13 @@ class DataRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun <T> saveEditedImage(img: T) {
-        if(img is Bitmap) imageProvider.saveBitmap(img, Constants.PATH_FOR_EDITED_IMG)
+    override fun <T> saveEditedImage(img: T) : Uri?{
+        return if(img is Bitmap) imageProvider.saveBitmap(img, Constants.PATH_FOR_EDITED_IMG)
+        else null
     }
 
-    override fun <T> shareImage(img: T) {
-        TODO("Not yet implemented")
+    override fun <T> shareImage(activity: Activity, uri: T) {
+        imageProvider.shareImage(activity, uri)
     }
 
     override fun <T> getBitmap(source: T): Bitmap? {

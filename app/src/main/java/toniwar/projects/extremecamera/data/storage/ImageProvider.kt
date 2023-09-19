@@ -1,14 +1,20 @@
 package toniwar.projects.extremecamera.data.storage
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Toast
 import toniwar.projects.extremecamera.Constants
+import toniwar.projects.extremecamera.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -32,7 +38,7 @@ class ImageProvider @Inject constructor(private val context: Context) {
     }
 
 
-    fun saveBitmap(bitmap: Bitmap, path: String){
+    fun saveBitmap(bitmap: Bitmap, path: String): Uri? {
         val contentValues = setContentValues(path)
         val resolver = context.contentResolver
         val uri = resolver.insert(
@@ -44,6 +50,7 @@ class ImageProvider @Inject constructor(private val context: Context) {
             stream?.close()
         }
 
+        return uri
 
     }
 
@@ -57,5 +64,26 @@ class ImageProvider @Inject constructor(private val context: Context) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, path)
             }
         }
+    }
+
+    fun<T> shareImage(activity: Activity, uri: T?){
+        if(uri is Uri?){
+            val msg = Intent(Intent.ACTION_SEND).apply {
+                type = "image/jpeg"
+                uri?.let {
+                    putExtra(Intent.EXTRA_STREAM, uri )
+                }
+            }
+
+            try{
+
+                activity.startActivity(Intent.createChooser(msg,""))
+            }
+            catch (e: ActivityNotFoundException){
+                Toast.makeText(context, R.string.txt_for_activity_not_found_exc,
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 }

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import toniwar.projects.extremecamera.R
 import toniwar.projects.extremecamera.presentation.fragments.CameraX
 import toniwar.projects.extremecamera.presentation.fragments.Editor
+import toniwar.projects.extremecamera.presentation.fragments.FinalResult
 import toniwar.projects.extremecamera.presentation.fragments.Gallery
 import toniwar.projects.extremecamera.presentation.fragments.Menu
 
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity(), FragmentListener {
             FragmentListener.Companion.ActionFlag.CAMERA_X->openFragment(CameraX())
             FragmentListener.Companion.ActionFlag.GALLERY->openFragment(Gallery())
             FragmentListener.Companion.ActionFlag.EDITOR->openFragment(Editor.newInstance(arg))
+            FragmentListener.Companion.ActionFlag.FINAL_RESULT -> openFragment(FinalResult.newInstance(arg))
         }
 
     }

@@ -4,5 +4,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="take_photo_btn_txt">Сделать фото</string>
     <string name="choose_photo_btn_txt">Выбрать фото</string>
+    <string name="share_image_txt">Поделиться</string>
+    <string name="return_to_main_display_txt">Вернуться на главный экран</string>
+    <string name="txt_for_activity_not_found_exc">Нет подходящего приложения для отправки фото</string>
 
 </resources>

@@ -9,7 +9,8 @@ interface FragmentListener {
             MENU,
             CAMERA_X,
             GALLERY,
-            EDITOR
+            EDITOR,
+            FINAL_RESULT
         }
     }
 }

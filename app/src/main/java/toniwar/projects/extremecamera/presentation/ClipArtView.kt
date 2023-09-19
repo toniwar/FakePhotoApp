@@ -22,10 +22,7 @@ class ClipArtView(
 
     }
 
-
-
     fun changeOpacity(newAlpha: Float){
-
         alpha += newAlpha
         invalidate()
 

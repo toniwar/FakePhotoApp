@@ -1,5 +1,6 @@
 package toniwar.projects.extremecamera.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -33,7 +34,7 @@ class ClipArtViewController @JvmOverloads constructor(
 
     }
 
-    fun setSampleView(view: ClipArtView){
+    fun setClipArtView(view: ClipArtView){
         clipArtView = view
     }
 
@@ -41,6 +42,7 @@ class ClipArtViewController @JvmOverloads constructor(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onFinishInflate() {
         super.onFinishInflate()
         binding.apply {

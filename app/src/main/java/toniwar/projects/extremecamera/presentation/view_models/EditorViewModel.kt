@@ -4,16 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +29,7 @@ import toniwar.projects.extremecamera.domain.use_cases.data_use_cases.SaveEdited
 import toniwar.projects.extremecamera.presentation.ClipArtView
 import toniwar.projects.extremecamera.presentation.ClipArtViewController
 import toniwar.projects.extremecamera.presentation.EditorMenu
+import toniwar.projects.extremecamera.presentation.GlideProvider
 import javax.inject.Inject
 
 class EditorViewModel @Inject constructor(
@@ -50,6 +50,9 @@ class EditorViewModel @Inject constructor(
         GetBitmapUseCase(dataRepository)
     }
 
+    @Inject
+    lateinit var glideProvider: GlideProvider
+
     private val mutableClipArtsList = MutableStateFlow<ClipArts?>(null)
 
     val clipArtsList:StateFlow<ClipArts?> get() = mutableClipArtsList.asStateFlow()
@@ -65,22 +68,15 @@ class EditorViewModel @Inject constructor(
 
 
 
-    fun inlineImage(view: ViewGroup, img: String, controller: ClipArtViewController){
+    fun inlineImage(view: ViewGroup, uri: String, controller: ClipArtViewController){
 
-        clipArtView = ClipArtView(context)
+        clipArtView = glideProvider.inlineClipArtView(view, uri)
+
         clipArtView?.let {
-            Glide.with(context)
-                .load(img)
-                .centerInside()
-                .into(it)
-            view.addView(it)
-            it.layoutParams = FrameLayout.LayoutParams(view.width, view.height)
-
-            controller.setSampleView(it)
+            controller.setClipArtView(it)
         }
-
-
     }
+
 
     fun removeClipArtView(view: ViewGroup){
         clipArtView?.let {
@@ -91,19 +87,17 @@ class EditorViewModel @Inject constructor(
 
     }
 
-    fun setImage(view: ImageView, url: String){
-        Glide.with(context)
-            .load(url)
-            .centerCrop()
-            .into(view)
+
+    fun <T> setImage(view: ImageView, uri: T){
+        glideProvider.setImageToView(view, uri)
     }
 
 
 
-    fun saveImage(view: View){
+    fun saveImage(view: View, uri: (Uri?)-> Unit){
         val bitmap = getBitmapUseCase.getBitmap(view)
         bitmap?.let {
-            saveEditedImageUseCase.saveEditedImage(bitmap)
+            uri.invoke(saveEditedImageUseCase.saveEditedImage(bitmap))
         }
 
     }

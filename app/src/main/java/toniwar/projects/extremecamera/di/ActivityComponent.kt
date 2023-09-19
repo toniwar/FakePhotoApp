@@ -4,6 +4,7 @@ import dagger.Component
 import toniwar.projects.extremecamera.presentation.MainActivity
 import toniwar.projects.extremecamera.presentation.fragments.CameraX
 import toniwar.projects.extremecamera.presentation.fragments.Editor
+import toniwar.projects.extremecamera.presentation.fragments.FinalResult
 import javax.inject.Scope
 
 @ActivityComponent.Companion.ActivityComponentScope
@@ -18,6 +19,8 @@ interface ActivityComponent {
     fun injectCameraX(fragment: CameraX)
 
     fun injectEditor(fragment: Editor)
+
+    fun injectFinalResult(fragment: FinalResult)
 
     @Component.Factory
     interface ActivityComponentFactory{

@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import toniwar.projects.extremecamera.presentation.view_models.CameraViewModel
 import toniwar.projects.extremecamera.presentation.view_models.EditorViewModel
+import toniwar.projects.extremecamera.presentation.view_models.FinalResultViewModel
 import toniwar.projects.extremecamera.presentation.view_models.vm_fabric.ViewModelsFabric
 
 
@@ -21,5 +22,10 @@ interface ViewModelsModule {
     @ViewModelsFabric.Companion.ViewModelKey(EditorViewModel::class)
     @Binds
     fun bindEditorViewModel(impl: EditorViewModel): ViewModel
+
+    @IntoMap
+    @ViewModelsFabric.Companion.ViewModelKey(FinalResultViewModel::class)
+    @Binds
+    fun bindFinalResultViewModel(impl: FinalResultViewModel): ViewModel
 
 }
