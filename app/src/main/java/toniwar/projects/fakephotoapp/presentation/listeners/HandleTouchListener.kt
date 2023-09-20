@@ -5,10 +5,10 @@ import android.view.View
 
 class HandleTouchListener: View.OnTouchListener {
 
-    var dX = 0f
-    var dY = 0f
-    var posX = 0f
-    var posY = 0f
+    private var dX = 0f
+    private var dY = 0f
+    private var posX = 0f
+    private var posY = 0f
 
 
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
