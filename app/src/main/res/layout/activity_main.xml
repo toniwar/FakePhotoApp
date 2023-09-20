@@ -6,7 +6,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="toniwar.projects.extremecamera.presentation.fragments.Menu"
+    android:name="toniwar.projects.fakephotoapp.presentation.fragments.Menu"
     tools:context=".presentation.MainActivity"
     tools:layout="@layout/fragment_menu"
 

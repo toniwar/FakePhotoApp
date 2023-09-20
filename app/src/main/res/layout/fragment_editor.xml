@@ -94,7 +94,7 @@
 
        />
 
-   <toniwar.projects.extremecamera.presentation.ClipArtViewController
+   <toniwar.projects.fakephotoapp.presentation.ClipArtViewController
        android:id="@+id/controller"
        android:layout_width="0dp"
        android:layout_height="0dp"

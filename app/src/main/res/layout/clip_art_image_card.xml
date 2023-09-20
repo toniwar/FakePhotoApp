@@ -11,7 +11,7 @@
         android:layout_marginTop="15dp"
         >
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/clip_art_img"
             android:layout_width="80dp"
             android:layout_height="80dp"
