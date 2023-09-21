@@ -40,12 +40,12 @@ class CameraRepositoryImpl @Inject constructor(
     override fun takePhoto(imgUri: (String) -> Unit) {
         val contentValues = imageProvider.setContentValues(Constants.PATH_FOR_TAKE_PHOTO)
 
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
                 context.contentResolver,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues
             ).build()
+
 
         cameraController.takePicture(
             outputOptions,
