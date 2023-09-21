@@ -6,25 +6,34 @@ import android.widget.FrameLayout
 import toniwar.projects.fakephotoapp.presentation.listeners.HandleTouchListener
 
 
+
 class ClipArtView(
     context: Context
 ): androidx.appcompat.widget.AppCompatImageView(context) {
 
     private val listener by lazy {
-        HandleTouchListener()
+        HandleTouchListener(context)
     }
+
+
 
     init {
         layoutParams = FrameLayout.LayoutParams(width, height)
         setOnTouchListener(listener)
+
+
     }
 
 
 
+
+
     fun move(newX: Float, newY: Float){
-        x += newX
-        y += newY
-        invalidate()
+        animate()
+            .x(x + newX)
+            .y(y + newY)
+            .setDuration(0)
+            .start()
 
     }
 
@@ -39,11 +48,13 @@ class ClipArtView(
     }
 
     fun changeScale(w: Float, h: Float){
-        val oldScaleX = scaleX
-        scaleX = oldScaleX + w
 
-        val oldScaleY = scaleY
-        scaleY = oldScaleY + h
+
+        animate()
+            .scaleX(scaleX + w)
+            .scaleY(scaleY + h)
+            .setDuration(0)
+            .start()
     }
 
 
