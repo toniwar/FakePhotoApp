@@ -1,4 +1,4 @@
-package toniwar.projects.fakephotoapp.di
+package toniwar.projects.fakephotoapp.di.activity_component
 
 import androidx.lifecycle.ViewModel
 import dagger.Binds

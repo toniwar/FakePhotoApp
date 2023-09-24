@@ -1,20 +1,20 @@
 package toniwar.projects.fakephotoapp.data.network
 
+import toniwar.projects.fakephotoapp.data.DataSource
 import toniwar.projects.fakephotoapp.domain.entities.Failure
-import toniwar.projects.fakephotoapp.domain.entities.NetworkException
-import toniwar.projects.fakephotoapp.domain.entities.NetworkResult
+import toniwar.projects.fakephotoapp.domain.entities.UploadException
+import toniwar.projects.fakephotoapp.domain.entities.UploadResult
 import toniwar.projects.fakephotoapp.domain.entities.Success
 import java.io.IOException
-import javax.inject.Inject
 
-class ImagesLoader @Inject constructor(
+class NetLoader(
 
     private val retrofitBuilder: RetrofitBuilder
-) {
+): DataSource {
 
 
-    suspend fun getResult() : NetworkResult{
-        val result = retrofitBuilder.clipArtsService.loadClipArts()
+    override suspend fun getResult() : UploadResult{
+        val result = retrofitBuilder.service.loadClipArts()
 
         val responseBody = result.body()
 
@@ -24,7 +24,7 @@ class ImagesLoader @Inject constructor(
             else Failure(result.code(), result.message())
         }
         catch (e: IOException){
-            NetworkException(e)
+            UploadException(e)
         }
 
     }

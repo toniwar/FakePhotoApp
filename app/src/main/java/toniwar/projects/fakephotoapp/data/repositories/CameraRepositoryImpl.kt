@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import toniwar.projects.fakephotoapp.Constants
 import toniwar.projects.fakephotoapp.data.storage.ImageProvider
-import toniwar.projects.fakephotoapp.di.ActivityComponent
+import toniwar.projects.fakephotoapp.di.activity_component.ActivityComponent
 import toniwar.projects.fakephotoapp.domain.repositories.CameraRepository
 import javax.inject.Inject
 

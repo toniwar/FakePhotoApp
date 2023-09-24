@@ -1,4 +1,4 @@
-package toniwar.projects.fakephotoapp.di
+package toniwar.projects.fakephotoapp.di.activity_component
 
 import dagger.Binds
 import dagger.Module

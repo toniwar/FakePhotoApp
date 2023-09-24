@@ -25,7 +25,7 @@ class ClipArtImageHolder(
 
     }
 
-    private fun getImage(image: String, imageView: ImageView){
+    private fun<T> getImage(image: T, imageView: ImageView){
 
         try {
             Glide.with(itemView.context)

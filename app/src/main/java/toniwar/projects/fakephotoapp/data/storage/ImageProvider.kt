@@ -38,7 +38,7 @@ class ImageProvider @Inject constructor(private val context: Context) {
     }
 
 
-    fun saveBitmap(bitmap: Bitmap, path: String): Uri? {
+    fun saveBitmap(bitmap: Bitmap?, path: String): Uri? {
         val contentValues = setContentValues(path)
         val resolver = context.contentResolver
         val uri = resolver.insert(
@@ -46,7 +46,7 @@ class ImageProvider @Inject constructor(private val context: Context) {
             contentValues)
         uri?.let {
             val stream = resolver.openOutputStream(uri)
-            if(stream != null) bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            if(stream != null) bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream?.close()
         }
 

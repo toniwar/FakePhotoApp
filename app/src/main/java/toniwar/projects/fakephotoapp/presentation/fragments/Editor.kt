@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import toniwar.projects.fakephotoapp.App
 import toniwar.projects.fakephotoapp.databinding.FragmentEditorBinding
-import toniwar.projects.fakephotoapp.di.DaggerActivityComponent
+import toniwar.projects.fakephotoapp.di.activity_component.DaggerActivityComponent
 import toniwar.projects.fakephotoapp.presentation.ClipArtsRVAdapter
 import toniwar.projects.fakephotoapp.presentation.EditorMenu
 import toniwar.projects.fakephotoapp.presentation.listeners.FragmentListener

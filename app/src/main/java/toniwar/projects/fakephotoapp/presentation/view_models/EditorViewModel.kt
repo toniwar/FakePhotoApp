@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import toniwar.projects.fakephotoapp.domain.entities.Failure
-import toniwar.projects.fakephotoapp.domain.entities.NetworkException
+import toniwar.projects.fakephotoapp.domain.entities.UploadException
 import toniwar.projects.fakephotoapp.domain.entities.ClipArts
 import toniwar.projects.fakephotoapp.domain.entities.Success
 import toniwar.projects.fakephotoapp.domain.repositories.DataRepository
@@ -29,7 +29,8 @@ import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveEditedI
 import toniwar.projects.fakephotoapp.presentation.ClipArtView
 import toniwar.projects.fakephotoapp.presentation.ClipArtViewController
 import toniwar.projects.fakephotoapp.presentation.EditorMenu
-import toniwar.projects.fakephotoapp.presentation.GlideProvider
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.InlineImageToViewUseCase
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SetImageToViewUseCase
 import javax.inject.Inject
 
 class EditorViewModel @Inject constructor(
@@ -50,8 +51,14 @@ class EditorViewModel @Inject constructor(
         GetBitmapUseCase(dataRepository)
     }
 
-    @Inject
-    lateinit var glideProvider: GlideProvider
+    private val setImageToViewUseCase by lazy {
+        SetImageToViewUseCase(dataRepository)
+    }
+
+    private val inlineImageToViewUseCase by lazy{
+        InlineImageToViewUseCase(dataRepository)
+    }
+
 
     private val mutableClipArtsList = MutableStateFlow<ClipArts?>(null)
 
@@ -66,18 +73,6 @@ class EditorViewModel @Inject constructor(
 
     }
 
-
-
-    fun inlineImage(view: ViewGroup, uri: String, controller: ClipArtViewController){
-
-        clipArtView = glideProvider.inlineClipArtView(view, uri)
-
-        clipArtView?.let {
-            controller.setClipArtView(it)
-        }
-    }
-
-
     fun removeClipArtView(view: ViewGroup){
         clipArtView?.let {
             clipArtView = null
@@ -88,8 +83,17 @@ class EditorViewModel @Inject constructor(
     }
 
 
-    fun <T> setImage(view: ImageView, uri: T){
-        glideProvider.setImageToView(view, uri)
+    fun <T> setImage(view: ImageView, source: T){
+        setImageToViewUseCase.setImageToView(view, source)
+    }
+
+    fun <T> inlineImage(view: ViewGroup, source: T, controller: ClipArtViewController){
+
+        inlineImageToViewUseCase.inlineImageToView(view, source)
+
+        clipArtView?.let {
+            controller.setClipArtView(it)
+        }
     }
 
 
@@ -103,9 +107,9 @@ class EditorViewModel @Inject constructor(
     }
 
 
-    private fun loadClipArts(){
+    private fun loadClipArts(isLocal: Boolean){
 
-        loadClipArtsUseCase.loadClipArts().onEach { result->
+        loadClipArtsUseCase.loadClipArts(isLocal).onEach { result->
             when(result){
                 is Success<*> -> {
                     if(result.clipArts is ClipArts)
@@ -122,9 +126,9 @@ class EditorViewModel @Inject constructor(
                         .show()
                 }
 
-                is NetworkException -> {
+                is UploadException -> {
                     Log.e(
-                        "NetworkException", "${result.exception.message}"
+                        "UploadException", "${result.exception.message}"
                     )
                     Toast.makeText(context, "${result.exception.message}", Toast.LENGTH_SHORT)
                         .show()
@@ -137,7 +141,7 @@ class EditorViewModel @Inject constructor(
     fun connectionListener(callback:(Boolean)->Unit){
 
         if(checkForConnection()){
-            loadClipArts()
+            loadClipArts(false)
             callback.invoke(true)
         }
         else callback.invoke(false)

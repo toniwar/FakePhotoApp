@@ -1,6 +1,7 @@
-package toniwar.projects.fakephotoapp.di
+package toniwar.projects.fakephotoapp.di.activity_component
 
 import dagger.Component
+import toniwar.projects.fakephotoapp.di.main_component.MainComponent
 import toniwar.projects.fakephotoapp.presentation.MainActivity
 import toniwar.projects.fakephotoapp.presentation.fragments.CameraX
 import toniwar.projects.fakephotoapp.presentation.fragments.Editor

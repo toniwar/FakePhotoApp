@@ -3,7 +3,7 @@ package toniwar.projects.fakephotoapp.presentation.view_models.vm_fabric
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.MapKey
-import toniwar.projects.fakephotoapp.di.ActivityComponent
+import toniwar.projects.fakephotoapp.di.activity_component.ActivityComponent
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass

@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import toniwar.projects.fakephotoapp.App
 import toniwar.projects.fakephotoapp.databinding.FragmentFinalResultBinding
-import toniwar.projects.fakephotoapp.di.DaggerActivityComponent
+import toniwar.projects.fakephotoapp.di.activity_component.DaggerActivityComponent
 import toniwar.projects.fakephotoapp.presentation.listeners.FragmentListener
 import toniwar.projects.fakephotoapp.presentation.view_models.FinalResultViewModel
 import toniwar.projects.fakephotoapp.presentation.view_models.vm_fabric.ViewModelsFabric

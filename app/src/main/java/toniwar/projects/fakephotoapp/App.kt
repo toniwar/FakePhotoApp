@@ -1,8 +1,9 @@
 package toniwar.projects.fakephotoapp
 
 import android.app.Application
-import toniwar.projects.fakephotoapp.di.DaggerMainComponent
-import toniwar.projects.fakephotoapp.di.MainComponent
+import toniwar.projects.fakephotoapp.di.main_component.DaggerMainComponent
+import toniwar.projects.fakephotoapp.di.main_component.MainComponent
+
 
 class App: Application() {
 

@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import toniwar.projects.fakephotoapp.App
 import toniwar.projects.fakephotoapp.Permissions
 import toniwar.projects.fakephotoapp.databinding.FragmentCameraXBinding
-import toniwar.projects.fakephotoapp.di.DaggerActivityComponent
+import toniwar.projects.fakephotoapp.di.activity_component.DaggerActivityComponent
 import toniwar.projects.fakephotoapp.presentation.listeners.FragmentListener
 import toniwar.projects.fakephotoapp.presentation.view_models.CameraViewModel
 import toniwar.projects.fakephotoapp.presentation.view_models.vm_fabric.ViewModelsFabric

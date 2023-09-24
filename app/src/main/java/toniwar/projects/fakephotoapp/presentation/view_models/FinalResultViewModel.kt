@@ -6,7 +6,7 @@ import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import toniwar.projects.fakephotoapp.domain.repositories.DataRepository
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.ShareImageUseCase
-import toniwar.projects.fakephotoapp.presentation.GlideProvider
+import toniwar.projects.fakephotoapp.data.storage.GlideProvider
 import javax.inject.Inject
 
 class FinalResultViewModel @Inject constructor(
