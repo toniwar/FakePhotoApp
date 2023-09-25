@@ -40,7 +40,7 @@ class GlideProvider @Inject constructor(val context: Context) {
     }
 
 
-    fun saveClipArtImageToStorage(path: String?, callback: (Bitmap?) -> Unit){
+    fun bitmapFromPath(path: String?, callback: (Bitmap?) -> Unit){
 
         if(path == null) return
         CoroutineScope(Dispatchers.IO).launch {

@@ -12,4 +12,9 @@ object Constants {
     const val PATH_FOR_CLIP_ARTS = "Pictures/$TAG/ClipArts"
     const val CLIP_ARTS_DB_NAME = "clip_arts_db"
     const val CLIP_ARTS_TABLE_NAME = "clip_arts_table"
+    const val USER_SHARED_PREFS = "user_sp"
+
+    enum class PrefDataType{
+        LAST_ID, SIZE
+    }
 }

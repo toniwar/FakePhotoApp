@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import toniwar.projects.fakephotoapp.Constants
+import toniwar.projects.fakephotoapp.domain.entities.ClipArt
 import toniwar.projects.fakephotoapp.domain.entities.Failure
 import toniwar.projects.fakephotoapp.domain.entities.UploadException
 import toniwar.projects.fakephotoapp.domain.entities.ClipArts
@@ -30,7 +32,11 @@ import toniwar.projects.fakephotoapp.presentation.ClipArtView
 import toniwar.projects.fakephotoapp.presentation.ClipArtViewController
 import toniwar.projects.fakephotoapp.presentation.EditorMenu
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.InlineImageToViewUseCase
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.ReadFromSharedPrefsUseCase
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveClipArtImageInStorageUseCase
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveClipArtsInDBUseCase
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SetImageToViewUseCase
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.WriteToSharedPrefsUseCase
 import javax.inject.Inject
 
 class EditorViewModel @Inject constructor(
@@ -57,6 +63,22 @@ class EditorViewModel @Inject constructor(
 
     private val inlineImageToViewUseCase by lazy{
         InlineImageToViewUseCase(dataRepository)
+    }
+
+    private val writeToSharedPrefsUseCase by lazy {
+        WriteToSharedPrefsUseCase(dataRepository)
+    }
+
+    private val readFromSharedPrefsUseCase by lazy {
+        ReadFromSharedPrefsUseCase(dataRepository)
+    }
+
+    private val saveClipArtImageInStorageUseCase by lazy {
+        SaveClipArtImageInStorageUseCase(dataRepository)
+    }
+
+    private val saveClipArtsInDBUseCase by lazy {
+        SaveClipArtsInDBUseCase(dataRepository)
     }
 
 
@@ -161,6 +183,31 @@ class EditorViewModel @Inject constructor(
             activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             else -> false
         }
+    }
+
+    fun saveClipArtsInLocalStorage(clipArts: List<ClipArt>){
+
+        if(checkSize() == 0){
+            val newClipArts = mutableListOf<ClipArt>()
+            clipArts.forEach {
+                val uri = saveClipArtImageInStorageUseCase.saveClipArtImageInStorage(it.img)
+                val newClipArt = it.copy(img = uri.toString())
+                newClipArts.add(newClipArt)
+            }
+            saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts)
+
+        }
+
+    }
+
+    private fun checkSize(): Int{
+        val size = readFromSharedPrefsUseCase
+            .readFromSharedPrefs<Int>(Constants.PrefDataType.SIZE)
+        size?.let{
+            return it
+        }
+        return 0
+
     }
 
 

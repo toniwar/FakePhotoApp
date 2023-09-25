@@ -38,8 +38,8 @@ class ImageProvider @Inject constructor(private val context: Context) {
     }
 
 
-    fun saveBitmap(bitmap: Bitmap?, path: String): Uri? {
-        val contentValues = setContentValues(path)
+    fun saveBitmap(bitmap: Bitmap?, path: String, id: Long? = null): Uri? {
+        val contentValues = setContentValues(path, id)
         val resolver = context.contentResolver
         val uri = resolver.insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -54,9 +54,11 @@ class ImageProvider @Inject constructor(private val context: Context) {
 
     }
 
-    fun setContentValues(path: String): ContentValues{
-        val name = SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
+    fun setContentValues(path: String, id: Long? = null): ContentValues{
+        val name = if(id == null)SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
             .format(System.currentTimeMillis())
+                else "img_$id"
+
         return ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")

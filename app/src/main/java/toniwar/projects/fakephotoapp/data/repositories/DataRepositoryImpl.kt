@@ -16,6 +16,7 @@ import toniwar.projects.fakephotoapp.data.database.DBLoader
 import toniwar.projects.fakephotoapp.data.storage.ImageProvider
 import toniwar.projects.fakephotoapp.data.network.NetLoader
 import toniwar.projects.fakephotoapp.data.network.RetrofitBuilder
+import toniwar.projects.fakephotoapp.data.storage.ClipArtsSharedPrefs
 import toniwar.projects.fakephotoapp.data.storage.GlideProvider
 import toniwar.projects.fakephotoapp.domain.entities.ClipArt
 import toniwar.projects.fakephotoapp.domain.entities.UploadResult
@@ -35,6 +36,9 @@ class DataRepositoryImpl @Inject constructor(
     @Inject
     lateinit var glideProvider: GlideProvider
 
+    @Inject
+    lateinit var sharedPrefs: ClipArtsSharedPrefs
+
     private val dbMapper = DBMapper()
 
 
@@ -45,6 +49,8 @@ class DataRepositoryImpl @Inject constructor(
     private val netLoader by lazy {
         NetLoader(retrofit)
     }
+
+
 
     override fun loadClipArts(isLocal: Boolean): Flow<UploadResult>{
 
@@ -98,7 +104,7 @@ class DataRepositoryImpl @Inject constructor(
     override fun saveClipArtImageInStorage(path: String?): Uri? {
         return try {
             var bitmap: Bitmap? = null
-            glideProvider.saveClipArtImageToStorage(path) {
+            glideProvider.bitmapFromPath(path) {
                 it.let {
                     bitmap = it
                 }
@@ -109,5 +115,22 @@ class DataRepositoryImpl @Inject constructor(
             null
         }
 
+    }
+
+    override fun <T> writeToSharedPrefs(name: Constants.PrefDataType, data: T) {
+
+        when(data){
+            is Int -> sharedPrefs.writeInt(name.name, data)
+            else -> return
+        }
+    }
+
+    override fun <T> readFromSharedPrefs(name: Constants.PrefDataType): T? {
+
+        return when(name){
+            Constants.PrefDataType.LAST_ID -> sharedPrefs.readInt(name.name) as T
+            Constants.PrefDataType.SIZE -> sharedPrefs.readInt(name.name) as T
+            else -> return null
+        }
     }
 }

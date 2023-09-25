@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import kotlinx.coroutines.flow.Flow
+import toniwar.projects.fakephotoapp.Constants
 import toniwar.projects.fakephotoapp.domain.entities.ClipArt
 import toniwar.projects.fakephotoapp.domain.entities.UploadResult
 
@@ -30,5 +31,12 @@ interface DataRepository {
     fun <T> inlineImageToView(view: ViewGroup, source: T ): View
 
     fun saveClipArtImageInStorage(path: String?): Uri?
+
+    fun <T> writeToSharedPrefs(name: Constants.PrefDataType, data: T)
+
+    fun <T> readFromSharedPrefs(name: Constants.PrefDataType): T?
+
+
+
 }
 
