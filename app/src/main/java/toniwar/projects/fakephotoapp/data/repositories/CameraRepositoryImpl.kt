@@ -38,7 +38,8 @@ class CameraRepositoryImpl @Inject constructor(
     }
 
     override fun takePhoto(imgUri: (String) -> Unit) {
-        val contentValues = imageProvider.setContentValues(Constants.PATH_FOR_TAKE_PHOTO)
+        val contentValues = imageProvider
+            .setContentValues(Constants.PATH_FOR_TAKE_PHOTO, Constants.IMAGE_JPEG)
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(
                 context.contentResolver,

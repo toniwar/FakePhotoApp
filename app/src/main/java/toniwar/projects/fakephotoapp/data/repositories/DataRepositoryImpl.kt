@@ -2,6 +2,7 @@ package toniwar.projects.fakephotoapp.data.repositories
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.net.Uri
 import android.util.Log
 import android.view.View
@@ -77,8 +78,20 @@ class DataRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun <T> saveEditedImage(img: T) : Uri?{
-        return if(img is Bitmap) imageProvider.saveBitmap(img, Constants.PATH_FOR_EDITED_IMG)
+    override fun <T> saveImage(
+        img: T,
+        path: String,
+        id: Int?,
+        format: CompressFormat,
+        mimeType: String
+    ): Uri? {
+        return if(img is Bitmap) imageProvider.saveBitmap(
+            img,
+            Constants.PATH_FOR_EDITED_IMG,
+            id,
+            format,
+            mimeType
+        )
         else null
     }
 
@@ -101,28 +114,19 @@ class DataRepositoryImpl @Inject constructor(
         return glideProvider.inlineClipArtView(view, source)
     }
 
-    override fun saveClipArtImageInStorage(path: String?): Uri? {
-        return try {
-            var bitmap: Bitmap? = null
-            glideProvider.bitmapFromPath(path) {
-                it.let {
-                    bitmap = it
-                }
-            }
-            imageProvider.saveBitmap(bitmap, Constants.PATH_FOR_CLIP_ARTS)
-        }
-        catch (e: Exception){
-            null
-        }
 
-    }
 
     override fun <T> writeToSharedPrefs(name: Constants.PrefDataType, data: T) {
 
-        when(data){
-            is Int -> sharedPrefs.writeInt(name.name, data)
-            else -> return
+        try {
+            sharedPrefs.write(name.name, data)
         }
+        catch (e: Exception){
+            Log.e("WriteToSP", e.message.toString())
+        }
+
+
+
     }
 
     override fun <T> readFromSharedPrefs(name: Constants.PrefDataType): T? {
@@ -130,6 +134,7 @@ class DataRepositoryImpl @Inject constructor(
         return when(name){
             Constants.PrefDataType.LAST_ID -> sharedPrefs.readInt(name.name) as T
             Constants.PrefDataType.SIZE -> sharedPrefs.readInt(name.name) as T
+            Constants.PrefDataType.IS_RECORDED_IN_DB -> sharedPrefs.readBoolean(name.name) as T
             else -> return null
         }
     }

@@ -40,18 +40,20 @@ class GlideProvider @Inject constructor(val context: Context) {
     }
 
 
-    fun bitmapFromPath(path: String?, callback: (Bitmap?) -> Unit){
+    fun bitmapFromPath(path: String?, bitmap: (Bitmap?)-> Unit){
 
         if(path == null) return
-        CoroutineScope(Dispatchers.IO).launch {
-            val bitmap = Glide.with(context)
+        CoroutineScope(Dispatchers.IO).launch{
+             val res = Glide.with(context)
                 .asBitmap()
                 .load(path)
                 .submit()
                 .get()
 
-            callback.invoke(bitmap)
+            bitmap.invoke(res)
+
         }
+
 
     }
 

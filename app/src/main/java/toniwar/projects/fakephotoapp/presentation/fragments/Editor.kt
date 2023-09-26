@@ -131,15 +131,14 @@ class Editor : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 flow<Unit> {
-                    var callback = false
-                    while (!callback) {
-                        vm.connectionListener {
-                            callback = it
+                    var isConnect = false
+                    while (!isConnect) {
+                        vm.connectionListener{
+                            isConnect = it
                         }
-                        if (callback) {
-                            getClipArtsList()
-                        }
-                        delay(3000)
+                        if (isConnect) getClipArtsList()
+
+                        delay(5000)
                     }
                 }.collect()
             }
@@ -159,7 +158,7 @@ class Editor : Fragment() {
     private suspend fun getClipArtsList(){
         vm.clipArtsList.collectLatest{ clipArts->
             clipArts?.let {
-                clipArtsRVAdapter.loadClipArts(it.clipArtsList)
+                clipArtsRVAdapter.loadClipArts(it)
 
             }
 

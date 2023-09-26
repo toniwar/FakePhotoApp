@@ -12,7 +12,7 @@ class DBMapper {
     }
 
     fun mapToClipArtList(input: List<ClipArtDBModel>): List<ClipArt>{
-        return input.map { with(it){ClipArt(id, title, img)} }
+        return input.map { with(it){ClipArt(true, id, title, img)} }
 
     }
 

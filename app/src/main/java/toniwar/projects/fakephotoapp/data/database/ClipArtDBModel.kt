@@ -7,7 +7,7 @@ import toniwar.projects.fakephotoapp.Constants
 
 @Entity(tableName = Constants.CLIP_ARTS_TABLE_NAME)
 data class ClipArtDBModel (
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
     val title: String,
     val img: String

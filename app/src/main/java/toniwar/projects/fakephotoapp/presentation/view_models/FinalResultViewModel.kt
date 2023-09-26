@@ -6,7 +6,7 @@ import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import toniwar.projects.fakephotoapp.domain.repositories.DataRepository
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.ShareImageUseCase
-import toniwar.projects.fakephotoapp.data.storage.GlideProvider
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SetImageToViewUseCase
 import javax.inject.Inject
 
 class FinalResultViewModel @Inject constructor(
@@ -16,8 +16,11 @@ class FinalResultViewModel @Inject constructor(
 
 ): ViewModel() {
 
-    @Inject
-    lateinit var glideProvider: GlideProvider
+
+
+    private val setImageToViewUseCase by lazy {
+        SetImageToViewUseCase(dataRepository)
+    }
 
     private val shareImageUseCase by lazy {
         ShareImageUseCase(dataRepository)
@@ -26,7 +29,7 @@ class FinalResultViewModel @Inject constructor(
 
     fun <T> setImage(view:ImageView, uri:T){
         uri?.let {
-            glideProvider.setImageToView(view, uri)
+            setImageToViewUseCase.setImageToView(view, uri)
         }
 
     }

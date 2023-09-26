@@ -2,17 +2,19 @@ package toniwar.projects.fakephotoapp.presentation.view_models
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,16 +29,16 @@ import toniwar.projects.fakephotoapp.domain.entities.Success
 import toniwar.projects.fakephotoapp.domain.repositories.DataRepository
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.GetBitmapUseCase
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.LoadClipArtsUseCase
-import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveEditedImageUseCase
+import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveImageUseCase
 import toniwar.projects.fakephotoapp.presentation.ClipArtView
 import toniwar.projects.fakephotoapp.presentation.ClipArtViewController
 import toniwar.projects.fakephotoapp.presentation.EditorMenu
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.InlineImageToViewUseCase
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.ReadFromSharedPrefsUseCase
-import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveClipArtImageInStorageUseCase
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SaveClipArtsInDBUseCase
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.SetImageToViewUseCase
 import toniwar.projects.fakephotoapp.domain.use_cases.data_use_cases.WriteToSharedPrefsUseCase
+import java.lang.Exception
 import javax.inject.Inject
 
 class EditorViewModel @Inject constructor(
@@ -49,8 +51,8 @@ class EditorViewModel @Inject constructor(
         LoadClipArtsUseCase(dataRepository)
     }
 
-    private val saveEditedImageUseCase by lazy {
-        SaveEditedImageUseCase(dataRepository)
+    private val saveImageUseCase by lazy {
+        SaveImageUseCase(dataRepository)
     }
 
     private val getBitmapUseCase by lazy {
@@ -73,22 +75,26 @@ class EditorViewModel @Inject constructor(
         ReadFromSharedPrefsUseCase(dataRepository)
     }
 
-    private val saveClipArtImageInStorageUseCase by lazy {
-        SaveClipArtImageInStorageUseCase(dataRepository)
-    }
 
     private val saveClipArtsInDBUseCase by lazy {
         SaveClipArtsInDBUseCase(dataRepository)
     }
 
 
-    private val mutableClipArtsList = MutableStateFlow<ClipArts?>(null)
+    private val mutableClipArtsList =
+        MutableStateFlow<List<ClipArt>?>(null)
 
-    val clipArtsList:StateFlow<ClipArts?> get() = mutableClipArtsList.asStateFlow()
+    private var isHasRecordInDB =
+        readFromSharedPrefsUseCase
+            .readFromSharedPrefs<Boolean>(Constants.PrefDataType.IS_RECORDED_IN_DB)
+
+    val clipArtsList:StateFlow<List<ClipArt>?> get() = mutableClipArtsList.asStateFlow()
 
 
     @SuppressLint("StaticFieldLeak")
     private var clipArtView: ClipArtView? = null
+
+    private val job = CoroutineScope(Dispatchers.IO)
 
     fun showMenu(guideline: List<Guideline>, menuType: EditorMenu.MenuTypes ){
         EditorMenu.menu(guideline, menuType)
@@ -120,11 +126,39 @@ class EditorViewModel @Inject constructor(
 
 
 
-    fun saveImage(view: View, uri: (Uri?)-> Unit){
-        val bitmap = getBitmapUseCase.getBitmap(view)
+    fun <T> saveImage(
+        source: T,
+        imgFormat: Format = Format.JPEG,
+        id: Int? = null,
+        uri: (Uri?)-> Unit){
+        val bitmap = getBitmapUseCase.getBitmap(source)
         bitmap?.let {
-            uri.invoke(saveEditedImageUseCase.saveEditedImage(bitmap))
+            uri.invoke(
+                when(imgFormat){
+                    Format.JPEG ->{
+                        saveImageUseCase
+                            .saveImage(
+                                bitmap,
+                                Constants.PATH_FOR_EDITED_IMG,
+                                null,
+                                Bitmap.CompressFormat.JPEG,
+                                Constants.IMAGE_JPEG
+                            )
+                    }
+                    Format.PNG ->{
+                        saveImageUseCase.saveImage(
+                            bitmap,
+                            Constants.PATH_FOR_CLIP_ARTS,
+                            id,
+                            Bitmap.CompressFormat.PNG,
+                            Constants.IMAGE_PNG
+                        )
+
+                    }
+                }
+            )
         }
+
 
     }
 
@@ -134,8 +168,25 @@ class EditorViewModel @Inject constructor(
         loadClipArtsUseCase.loadClipArts(isLocal).onEach { result->
             when(result){
                 is Success<*> -> {
-                    if(result.clipArts is ClipArts)
-                        mutableClipArtsList.value = result.clipArts
+                    if(result.clipArts is ClipArts){
+                        val newList = mutableListOf<ClipArt>()
+                        result.clipArts.clipArtsList.forEach {
+                            try {
+                                newList.add(it)
+                            }
+                            catch (e: Exception){
+                                Log.e("Read result in EditorVM", e.message.toString())
+                            }
+                        }
+                        mutableClipArtsList.value = newList
+                        saveClipArtsInLocalStorage(newList)
+                        if(isHasRecordInDB == null || isHasRecordInDB == false)
+                            writeToSharedPrefsUseCase
+                                .writeToSharedPrefs(
+                                    Constants.PrefDataType.IS_RECORDED_IN_DB, true
+                                )
+                    }
+
                 }
 
                 is Failure -> {
@@ -157,16 +208,28 @@ class EditorViewModel @Inject constructor(
                 }
             }
 
-        }.launchIn(viewModelScope)
+        }.launchIn(job)
     }
 
-    fun connectionListener(callback:(Boolean)->Unit){
+    fun connectionListener(isConnect:(Boolean)->Unit){
+        var record  = false
+        isHasRecordInDB?.let{
+            record = it
+        }
 
         if(checkForConnection()){
             loadClipArts(false)
-            callback.invoke(true)
+            isConnect.invoke(true)
         }
-        else callback.invoke(false)
+
+        else{
+            if(record){
+                loadClipArts(true)
+                isConnect.invoke(true)
+            }
+
+            else isConnect.invoke(false)
+        }
 
     }
 
@@ -185,16 +248,20 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    fun saveClipArtsInLocalStorage(clipArts: List<ClipArt>){
+    private fun saveClipArtsInLocalStorage(clipArts: List<ClipArt>){
 
-        if(checkSize() == 0){
+        if(checkSize() == 0) {
             val newClipArts = mutableListOf<ClipArt>()
-            clipArts.forEach {
-                val uri = saveClipArtImageInStorageUseCase.saveClipArtImageInStorage(it.img)
-                val newClipArt = it.copy(img = uri.toString())
-                newClipArts.add(newClipArt)
+            clipArts.forEach {clipArt->
+                saveImage(clipArt.img, Format.PNG, clipArt.id){
+                    val newClipArt = clipArt.copy(img = it.toString())
+                    newClipArts.add(newClipArt)
+                }
+
             }
             saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts)
+            writeToSharedPrefsUseCase
+                .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
 
         }
 
@@ -208,6 +275,17 @@ class EditorViewModel @Inject constructor(
         }
         return 0
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
+    }
+
+    companion object ImageType{
+        enum class Format{
+            JPEG, PNG
+        }
     }
 
 

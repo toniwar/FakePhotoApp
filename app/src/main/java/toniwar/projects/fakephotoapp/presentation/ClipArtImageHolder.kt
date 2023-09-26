@@ -1,6 +1,7 @@
 package toniwar.projects.fakephotoapp.presentation
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,8 @@ class ClipArtImageHolder(
 
     @SuppressLint("SetTextI18n")
     fun bind(item: ClipArt) = with(binding){
-        getImage(item.img, clipArtImg)
+        val img = if(item.isUri) Uri.parse(item.img) else item.img
+        getImage(img, clipArtImg)
         clipArtTitle.text = "${item.id}: ${item.title}"
 
     }

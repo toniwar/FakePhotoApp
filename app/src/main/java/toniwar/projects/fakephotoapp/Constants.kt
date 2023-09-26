@@ -13,8 +13,11 @@ object Constants {
     const val CLIP_ARTS_DB_NAME = "clip_arts_db"
     const val CLIP_ARTS_TABLE_NAME = "clip_arts_table"
     const val USER_SHARED_PREFS = "user_sp"
+    const val IMAGE_JPEG = "image/jpeg"
+    const val IMAGE_PNG = "image/png"
 
     enum class PrefDataType{
-        LAST_ID, SIZE
+        LAST_ID, SIZE, IS_RECORDED_IN_DB
     }
+
 }

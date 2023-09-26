@@ -2,6 +2,7 @@ package toniwar.projects.fakephotoapp.domain.repositories
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,10 @@ interface DataRepository {
 
     fun saveClipArtsInDB(clipArts: List<ClipArt>)
 
-    fun <T> saveEditedImage(img: T): Uri?
+    fun <T> saveImage(img: T, path: String,
+                      id: Int?,
+                      format: CompressFormat,
+                      mimeType: String): Uri?
 
     fun <T> shareImage(activity: Activity, uri: T)
 
@@ -30,7 +34,6 @@ interface DataRepository {
 
     fun <T> inlineImageToView(view: ViewGroup, source: T ): View
 
-    fun saveClipArtImageInStorage(path: String?): Uri?
 
     fun <T> writeToSharedPrefs(name: Constants.PrefDataType, data: T)
 
