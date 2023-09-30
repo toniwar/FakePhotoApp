@@ -103,58 +103,16 @@ class ImageProvider @Inject constructor(private val context: Context) {
     ): Uri? {
         val (contentValues, name) = setContentValues(path, mimeType, id)
         val resolver = context.contentResolver
-        val uri = checkUri(contentValues, name, mimeType)
+        val uri = checkUri(contentValues, name)
         uri?.let {
             val stream = resolver.openOutputStream(it)
-
-
             if(stream != null) {
                 bitmap?.compress(format, 100, stream)
                 stream.close()
             }
-
         }
-
         return uri
     }
-
-    private fun checkUri(
-        contentValues: ContentValues,
-        name: String,
-        mimeType: String
-    ):Uri?{
-        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val cursor = context.contentResolver.query(
-            uri,
-            arrayOf(MediaStore.Images.Media.DATA),
-            MediaStore.MediaColumns.DISPLAY_NAME + " = ? AND " + MediaStore.MediaColumns.MIME_TYPE + " = ?",
-            arrayOf(name, mimeType),
-            null
-        )
-
-        var fileUri: Uri? = null
-        if(cursor != null && cursor.count > 0){
-            while (cursor.moveToNext()){
-                val nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-                if(nameIndex > -1){
-                    val displayName = cursor.getString(nameIndex)
-                    if(displayName == name){
-                        val idIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
-                        if(idIndex > -1){
-                            val id = cursor.getLong(idIndex)
-                            fileUri = ContentUris.withAppendedId(uri, id)
-                        }
-                    }
-                }
-            }
-            cursor.close()
-        }
-        else{
-            fileUri = context.contentResolver.insert(uri, contentValues)
-        }
-        return fileUri
-    }
-
     fun setContentValues(path: String, mimeType: String,id: Int? = null):
             Pair<ContentValues, String>{
         val name = if(id == null)SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
@@ -168,8 +126,45 @@ class ImageProvider @Inject constructor(private val context: Context) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, path)
             }
         }
-
         return Pair(contentValues, name)
+    }
+    private fun checkUri(
+        contentValues: ContentValues,
+        name: String
+    ):Uri?{
+        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME,
+        MediaStore.MediaColumns._ID)
+        val cursor = context.contentResolver.query(
+            uri, projection, null, null, null
+        )
+        Log.d(TAG, "Name: $name")
+
+        val fileUri: Uri?
+        if(cursor != null){
+            cursor.moveToFirst()
+            while (cursor.moveToNext()){
+                val nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                if(nameIndex > -1){
+                    val displayName = cursor.getString(nameIndex)
+                    Log.d(TAG, "Display Name: $displayName")
+                    if(displayName.substringBefore(".") == name){
+                        Log.d(TAG, "Bingo!!! $displayName = $name")
+                        val idIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
+                        if(idIndex > -1){
+                            val id = cursor.getLong(idIndex)
+                            fileUri = ContentUris.withAppendedId(uri, id)
+                            Log.d(TAG, "Uri: $fileUri")
+                            return fileUri
+                        }
+                    }
+                }
+            }
+            cursor.close()
+        }
+        fileUri = context.contentResolver.insert(uri, contentValues)
+        Log.d(TAG, "Uri: $fileUri")
+        return fileUri
     }
 
     fun<T> shareImage(activity: Activity, uri: T?){
