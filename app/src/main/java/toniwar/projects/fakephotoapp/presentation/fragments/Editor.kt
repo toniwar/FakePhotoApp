@@ -116,12 +116,9 @@ class Editor : Fragment() {
                 vm.showMenu(guideLinesSet, EditorMenu.MenuTypes.TOOLS)
             }
             saveImageButton.setOnClickListener {
-                vm.saveImage(containerLayout){result ->
-                    result?.let {
-                        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                        listener.openFragment(FragmentListener.Companion.ActionFlag.FINAL_RESULT, it.toString())
-                    }
-
+                vm.screenShot(containerLayout){ uri->
+                    activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                    listener.openFragment(FragmentListener.Companion.ActionFlag.FINAL_RESULT, uri.toString())
                 }
 
             }

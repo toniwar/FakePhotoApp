@@ -44,8 +44,9 @@ class CameraRepositoryImpl @Inject constructor(
         val outputOptions = ImageCapture.OutputFileOptions.Builder(
                 context.contentResolver,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
+                contentValues.first
             ).build()
+
 
 
         cameraController.takePicture(

@@ -27,7 +27,7 @@ interface DataRepository {
 
     fun <T> shareImage(activity: Activity, uri: T)
 
-    fun <T> getBitmap(source: T): Bitmap?
+    fun <T> getBitmap(source: T): Flow<List<Bitmap?>>
 
 
     fun <T> setImageToView(view: ImageView, source: T)
@@ -38,8 +38,6 @@ interface DataRepository {
     fun <T> writeToSharedPrefs(name: Constants.PrefDataType, data: T)
 
     fun <T> readFromSharedPrefs(name: Constants.PrefDataType): T?
-
-
 
 }
 

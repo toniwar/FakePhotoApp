@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import toniwar.projects.fakephotoapp.Constants
 import toniwar.projects.fakephotoapp.domain.entities.ClipArt
 import toniwar.projects.fakephotoapp.domain.entities.Failure
@@ -98,19 +100,14 @@ class EditorViewModel @Inject constructor(
 
     fun showMenu(guideline: List<Guideline>, menuType: EditorMenu.MenuTypes ){
         EditorMenu.menu(guideline, menuType)
-
     }
-
     fun removeClipArtView(view: ViewGroup){
         clipArtView?.let {
             clipArtView = null
             view.removeView(it)
             view.invalidate()
         }
-
     }
-
-
     fun <T> setImage(view: ImageView, source: T){
         setImageToViewUseCase.setImageToView(view, source)
     }
@@ -123,46 +120,54 @@ class EditorViewModel @Inject constructor(
             controller.setClipArtView(it)
         }
     }
-
-
-
-    fun <T> saveImage(
-        source: T,
-        imgFormat: Format = Format.JPEG,
-        id: Int? = null,
-        uri: (Uri?)-> Unit){
-        val bitmap = getBitmapUseCase.getBitmap(source)
-        bitmap?.let {
-            uri.invoke(
-                when(imgFormat){
-                    Format.JPEG ->{
-                        saveImageUseCase
-                            .saveImage(
-                                bitmap,
-                                Constants.PATH_FOR_EDITED_IMG,
-                                null,
-                                Bitmap.CompressFormat.JPEG,
-                                Constants.IMAGE_JPEG
-                            )
-                    }
-                    Format.PNG ->{
-                        saveImageUseCase.saveImage(
-                            bitmap,
-                            Constants.PATH_FOR_CLIP_ARTS,
-                            id,
-                            Bitmap.CompressFormat.PNG,
-                            Constants.IMAGE_PNG
-                        )
-
-                    }
-                }
-            )
+    fun screenShot(view: View, uri: (Uri)-> Unit){
+        getBitmapArray(view){bitmaps ->
+            saveImages(bitmaps){ uriList->
+                uriList.first()?.let { uri.invoke(it) }
+            }
         }
 
-
     }
+    private fun <T> getBitmapArray(source: T, bitmaps: (List<Bitmap?>) -> Unit ){
+        job.launch {
+            getBitmapUseCase.getBitmap(source).collect{bitmaps.invoke(it)}
+        }
+    }
+    private fun saveImages(
+        source: List<Bitmap?>,
+        imgFormat: Format = Format.JPEG,
+        idList: List<Int>? = null,
+        uri: (List<Uri?>)-> Unit){
 
-
+        val uriList = mutableListOf<Uri?>()
+        when(imgFormat){
+            Format.JPEG ->{
+                source.forEach {
+                    uriList.add(
+                        saveImageUseCase.saveImage(
+                            it,
+                            Constants.PATH_FOR_EDITED_IMG,
+                            null,
+                             Bitmap.CompressFormat.JPEG,
+                            Constants.IMAGE_JPEG
+                    ))
+                }
+            }
+            Format.PNG ->{
+                source.forEachIndexed {index, item->
+                    uriList.add(
+                        saveImageUseCase.saveImage(
+                            item,
+                            Constants.PATH_FOR_CLIP_ARTS,
+                            idList?.get(index),
+                            Bitmap.CompressFormat.PNG,
+                            Constants.IMAGE_PNG
+                        ))
+                }
+            }
+        }
+        uri.invoke(uriList)
+    }
     private fun loadClipArts(isLocal: Boolean){
 
         loadClipArtsUseCase.loadClipArts(isLocal).onEach { result->
@@ -249,31 +254,21 @@ class EditorViewModel @Inject constructor(
     }
 
     private fun saveClipArtsInLocalStorage(clipArts: List<ClipArt>){
-
-        if(checkSize() == 0) {
-            val newClipArts = mutableListOf<ClipArt>()
-            clipArts.forEach {clipArt->
-                saveImage(clipArt.img, Format.PNG, clipArt.id){
-                    val newClipArt = clipArt.copy(img = it.toString())
+        val paths = clipArts.map { it.img }
+        val idList = clipArts.map { it.id }
+        val newClipArts = mutableListOf<ClipArt>()
+        getBitmapArray(paths){
+            saveImages(it, Format.PNG, idList,){uriList ->
+                uriList.forEachIndexed { index, uri ->
+                    val newClipArt = clipArts[index].copy(img = uri.toString())
                     newClipArts.add(newClipArt)
                 }
+                saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts.toList())
+                writeToSharedPrefsUseCase
+                    .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
 
             }
-            saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts)
-            writeToSharedPrefsUseCase
-                .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
-
         }
-
-    }
-
-    private fun checkSize(): Int{
-        val size = readFromSharedPrefsUseCase
-            .readFromSharedPrefs<Int>(Constants.PrefDataType.SIZE)
-        size?.let{
-            return it
-        }
-        return 0
 
     }
 
@@ -281,13 +276,10 @@ class EditorViewModel @Inject constructor(
         super.onCleared()
         job.cancel()
     }
-
     companion object ImageType{
         enum class Format{
             JPEG, PNG
         }
     }
-
-
 }
 

@@ -2,6 +2,7 @@ package toniwar.projects.fakephotoapp.data.storage
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -16,72 +17,80 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import toniwar.projects.fakephotoapp.Constants
 import toniwar.projects.fakephotoapp.R
-import java.net.HttpURLConnection
-import java.net.URL
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 
 class ImageProvider @Inject constructor(private val context: Context) {
 
-    fun <T> getBitmap(source: T): Bitmap?{
-        return when(source){
-            is View -> {
-                val bitmap = Bitmap.createBitmap(source.width,
-                    source.height,
-                    Bitmap.Config.ARGB_8888)
+    fun <T> getBitmap(source: T): Flow<List<Bitmap?>> {
+        val bitmapList = mutableListOf<Bitmap?>()
 
-                val canvas = Canvas(bitmap)
-                val background = source.background
-                if(background != null) background.draw(canvas)
-                else canvas.drawColor(Color.BLACK)
-                source.draw(canvas)
-                bitmap
-            }
-            is Uri -> {
-                try {
-                    val stream = context.contentResolver.openInputStream(source)
-                    val bitmap = BitmapFactory
-                        .decodeStream(stream)
-                    stream?.close()
-                    bitmap
-                }catch (e: Exception){
-                    Log.e("ImageProviderGetBitmap", e.message.toString())
-                    null
-                }
+        when(source){
+           is View ->{
+                   bitmapList.add(bitmapFromView(source))
+           }
 
-            }
-
-            is String ->{
-                try {
-//                    val url = URL(source)
-//                    val connection = url.openConnection() as HttpURLConnection
-//                    connection.doInput = true
-//                    connection.connect()
-//                    val stream = connection.inputStream
-//                    val bitmap = BitmapFactory.decodeStream(stream)
-//                    stream.close()
-//                    bitmap
-                    var bitmap: Bitmap? = null
-                    GlideProvider(context).bitmapFromPath(source){
-                        bitmap = it
+            is List<*> -> {
+                source.forEach {
+                    try {
+                        bitmapList.add(bitmapFromCollection(it))
                     }
-                    Log.d("ImageProviderGetBitmapFromPath", bitmap.toString())
-                    bitmap
+                    catch (e: Exception){
+                        Log.e(TAG, e.message.toString())
+                    }
 
-
-                }
-                catch (e: java.lang.Exception){
-                    Log.e("ImageProviderGetBitmap", e.message.toString())
-                    null
                 }
             }
-
-            else -> null
         }
 
+        return flow {
+            emit(bitmapList.toList())
+        }
+    }
+
+    private fun <T> bitmapFromCollection(itemType: T): Bitmap?{
+        return when(itemType){
+            is Uri -> bitmapFromUri(itemType)
+            is String -> bitmapFromUrl(itemType)
+            else -> null
+        }
+    }
+
+    private fun bitmapFromView(view: View?): Bitmap?{
+        if (view == null) return null
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val background = view.background
+        if(background != null) background.draw(canvas)
+        else canvas.drawColor(Color.WHITE)
+        view.draw(canvas)
+        return bitmap
+    }
+
+
+
+    private fun bitmapFromUrl(path: String?): Bitmap?{
+        if(path.isNullOrBlank()) return null
+        return Glide.with(context)
+            .asBitmap()
+            .load(path)
+            .submit()
+            .get()
+    }
+
+    private fun bitmapFromUri(uri: Uri?): Bitmap?{
+        if(uri == null) return null
+        val stream = context.contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(stream)
+        stream?.close()
+        return bitmap
     }
 
 
@@ -92,33 +101,75 @@ class ImageProvider @Inject constructor(private val context: Context) {
         format: CompressFormat,
         mimeType: String
     ): Uri? {
-        val contentValues = setContentValues(path, mimeType, id)
+        val (contentValues, name) = setContentValues(path, mimeType, id)
         val resolver = context.contentResolver
-        val uri = resolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues)
+        val uri = checkUri(contentValues, name, mimeType)
         uri?.let {
-            val stream = resolver.openOutputStream(uri)
-            if(stream != null) bitmap?.compress(format, 100, stream)
-            stream?.close()
+            val stream = resolver.openOutputStream(it)
+
+
+            if(stream != null) {
+                bitmap?.compress(format, 100, stream)
+                stream.close()
+            }
+
         }
 
         return uri
-
     }
 
-    fun setContentValues(path: String, mimeType: String,id: Int? = null): ContentValues{
+    private fun checkUri(
+        contentValues: ContentValues,
+        name: String,
+        mimeType: String
+    ):Uri?{
+        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val cursor = context.contentResolver.query(
+            uri,
+            arrayOf(MediaStore.Images.Media.DATA),
+            MediaStore.MediaColumns.DISPLAY_NAME + " = ? AND " + MediaStore.MediaColumns.MIME_TYPE + " = ?",
+            arrayOf(name, mimeType),
+            null
+        )
+
+        var fileUri: Uri? = null
+        if(cursor != null && cursor.count > 0){
+            while (cursor.moveToNext()){
+                val nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                if(nameIndex > -1){
+                    val displayName = cursor.getString(nameIndex)
+                    if(displayName == name){
+                        val idIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
+                        if(idIndex > -1){
+                            val id = cursor.getLong(idIndex)
+                            fileUri = ContentUris.withAppendedId(uri, id)
+                        }
+                    }
+                }
+            }
+            cursor.close()
+        }
+        else{
+            fileUri = context.contentResolver.insert(uri, contentValues)
+        }
+        return fileUri
+    }
+
+    fun setContentValues(path: String, mimeType: String,id: Int? = null):
+            Pair<ContentValues, String>{
         val name = if(id == null)SimpleDateFormat(Constants.FILENAME_FORMAT, Locale.ROOT)
             .format(System.currentTimeMillis())
-                else "img_$id"
+                else "img-$id"
 
-        return ContentValues().apply {
+        val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, path)
             }
         }
+
+        return Pair(contentValues, name)
     }
 
     fun<T> shareImage(activity: Activity, uri: T?){
@@ -142,6 +193,8 @@ class ImageProvider @Inject constructor(private val context: Context) {
 
     }
 
-
+    companion object{
+        const val TAG = "Image provider"
+    }
 
 }

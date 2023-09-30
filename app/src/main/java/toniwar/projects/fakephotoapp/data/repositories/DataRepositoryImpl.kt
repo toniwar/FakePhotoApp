@@ -87,7 +87,7 @@ class DataRepositoryImpl @Inject constructor(
     ): Uri? {
         return if(img is Bitmap) imageProvider.saveBitmap(
             img,
-            Constants.PATH_FOR_EDITED_IMG,
+            path,
             id,
             format,
             mimeType
@@ -99,9 +99,8 @@ class DataRepositoryImpl @Inject constructor(
         imageProvider.shareImage(activity, uri)
     }
 
-    override fun <T> getBitmap(source: T): Bitmap? {
-        return if(source is View) imageProvider.getBitmap(source)
-        else null
+    override fun <T> getBitmap(source: T): Flow<List<Bitmap?>> {
+        return imageProvider.getBitmap(source)
     }
 
 
