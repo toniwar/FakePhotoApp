@@ -47,6 +47,7 @@ class DataRepositoryImpl @Inject constructor(
         DBLoader(clipArtsDAO, dbMapper)
     }
 
+
     private val netLoader by lazy {
         NetLoader(retrofit)
     }
@@ -55,11 +56,23 @@ class DataRepositoryImpl @Inject constructor(
 
     override fun loadClipArts(isLocal: Boolean): Flow<UploadResult>{
 
-        val source = if(!isLocal) netLoader else dbLoader
-        return flow{
-            val result = source.getResult()
+        return if(!isLocal) flow{
+            val result = netLoader.getResult()
+            Log.d("DataRepository", result.toString())
             emit(result)
         }
+        else {
+            var result: UploadResult? = null
+            flow {
+                dbLoader.getResult {
+                    result = it
+                    Log.d("DataRepository", result.toString())
+                }
+                Log.d("DataRepository", result.toString())
+                emit(result!!)
+            }
+        }
+
 
     }
 

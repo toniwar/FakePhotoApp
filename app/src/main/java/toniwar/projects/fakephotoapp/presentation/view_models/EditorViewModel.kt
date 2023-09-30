@@ -90,6 +90,7 @@ class EditorViewModel @Inject constructor(
         readFromSharedPrefsUseCase
             .readFromSharedPrefs<Boolean>(Constants.PrefDataType.IS_RECORDED_IN_DB)
 
+
     val clipArtsList:StateFlow<List<ClipArt>?> get() = mutableClipArtsList.asStateFlow()
 
 
@@ -169,34 +170,34 @@ class EditorViewModel @Inject constructor(
         uri.invoke(uriList)
     }
     private fun loadClipArts(isLocal: Boolean){
+        Log.d("EditorVM", "Load ClipArts, isLocal = $isLocal")
 
         loadClipArtsUseCase.loadClipArts(isLocal).onEach { result->
             when(result){
                 is Success<*> -> {
                     if(result.clipArts is ClipArts){
+                        Log.d("EditorVM", "Result is ClipArts")
                         val newList = mutableListOf<ClipArt>()
                         result.clipArts.clipArtsList.forEach {
                             try {
                                 newList.add(it)
                             }
                             catch (e: Exception){
-                                Log.e("Read result in EditorVM", e.message.toString())
+                                Log.e("EditorVM", e.message.toString())
                             }
                         }
                         mutableClipArtsList.value = newList
-                        saveClipArtsInLocalStorage(newList)
+                        saveClipArtsInLocalStorage(newList.toList())
                         if(isHasRecordInDB == null || isHasRecordInDB == false)
                             writeToSharedPrefsUseCase
                                 .writeToSharedPrefs(
                                     Constants.PrefDataType.IS_RECORDED_IN_DB, true
                                 )
                     }
-
                 }
-
                 is Failure -> {
                     Log.e(
-                        "NetworkError", "${result.errorCode}: ${result.errorMessage}"
+                        "EditorVM", "${result.errorCode}: ${result.errorMessage}"
                     )
                     Toast.makeText(context,
                         "${result.errorCode}: ${result.errorMessage}",
@@ -206,7 +207,7 @@ class EditorViewModel @Inject constructor(
 
                 is UploadException -> {
                     Log.e(
-                        "UploadException", "${result.exception.message}"
+                        "EditorVM", "${result.exception.message}"
                     )
                     Toast.makeText(context, "${result.exception.message}", Toast.LENGTH_SHORT)
                         .show()
@@ -217,20 +218,16 @@ class EditorViewModel @Inject constructor(
     }
 
     fun connectionListener(isConnect:(Boolean)->Unit){
-        var record  = false
-        isHasRecordInDB?.let{
-            record = it
-        }
-
         if(checkForConnection()){
             loadClipArts(false)
             isConnect.invoke(true)
         }
 
         else{
-            if(record){
-                loadClipArts(true)
+            if(isHasRecordInDB != null && isHasRecordInDB==true){
+                Log.d("EditorVM", "Try to get data from DB")
                 isConnect.invoke(true)
+                loadClipArts(true)
             }
 
             else isConnect.invoke(false)
