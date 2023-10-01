@@ -114,9 +114,7 @@ class EditorViewModel @Inject constructor(
     }
 
     fun <T> inlineImage(view: ViewGroup, source: T, controller: ClipArtViewController){
-
-        inlineImageToViewUseCase.inlineImageToView(view, source)
-
+        clipArtView = inlineImageToViewUseCase.inlineImageToView(view, source) as ClipArtView
         clipArtView?.let {
             controller.setClipArtView(it)
         }
@@ -260,9 +258,15 @@ class EditorViewModel @Inject constructor(
                     val newClipArt = clipArts[index].copy(img = uri.toString())
                     newClipArts.add(newClipArt)
                 }
-                saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts.toList())
-                writeToSharedPrefsUseCase
-                    .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
+                val size =
+                    readFromSharedPrefsUseCase
+                        .readFromSharedPrefs<Int>(Constants.PrefDataType.SIZE)
+                if(size != null && size < newClipArts.size){
+                    saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts.toList())
+                    writeToSharedPrefsUseCase
+                        .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
+                }
+
 
             }
         }

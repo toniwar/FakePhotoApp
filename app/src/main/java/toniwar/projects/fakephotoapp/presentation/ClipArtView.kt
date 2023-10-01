@@ -14,19 +14,11 @@ class ClipArtView(
     private val listener by lazy {
         HandleTouchListener(context)
     }
-
-
-
     init {
         layoutParams = FrameLayout.LayoutParams(width, height)
         setOnTouchListener(listener)
 
-
     }
-
-
-
-
 
     fun move(newX: Float, newY: Float){
         animate()
@@ -37,8 +29,6 @@ class ClipArtView(
 
     }
 
-
-
     fun changeOpacity(newAlpha: Float){
 
         if(alpha + newAlpha !in 0f..1.0f) return
@@ -48,8 +38,6 @@ class ClipArtView(
     }
 
     fun changeScale(w: Float, h: Float){
-
-
         animate()
             .scaleX(scaleX + w)
             .scaleY(scaleY + h)
