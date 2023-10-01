@@ -30,7 +30,8 @@ class ClipArtViewController @JvmOverloads constructor(
 
     private fun initializeViews(){
 
-        binding = ClipArtViewControllerBinding.inflate(LayoutInflater.from(context), this, true)
+        binding = ClipArtViewControllerBinding.
+        inflate(LayoutInflater.from(context), this, true)
 
     }
 
@@ -38,9 +39,6 @@ class ClipArtViewController @JvmOverloads constructor(
         clipArtView = view
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
 
     @SuppressLint("SuspiciousIndentation")
     override fun onFinishInflate() {

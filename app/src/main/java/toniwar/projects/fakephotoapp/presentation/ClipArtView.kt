@@ -11,13 +11,13 @@ class ClipArtView(
     context: Context
 ): androidx.appcompat.widget.AppCompatImageView(context) {
 
+
     private val listener by lazy {
         HandleTouchListener(context)
     }
     init {
         layoutParams = FrameLayout.LayoutParams(width, height)
         setOnTouchListener(listener)
-
     }
 
     fun move(newX: Float, newY: Float){
@@ -43,9 +43,8 @@ class ClipArtView(
             .scaleY(scaleY + h)
             .setDuration(0)
             .start()
+
     }
-
-
 
 }
 

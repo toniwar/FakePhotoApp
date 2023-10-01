@@ -185,12 +185,14 @@ class EditorViewModel @Inject constructor(
                             }
                         }
                         mutableClipArtsList.value = newList
-                        saveClipArtsInLocalStorage(newList.toList())
-                        if(isHasRecordInDB == null || isHasRecordInDB == false)
-                            writeToSharedPrefsUseCase
-                                .writeToSharedPrefs(
-                                    Constants.PrefDataType.IS_RECORDED_IN_DB, true
-                                )
+                        if(!isLocal) {
+                            saveClipArtsInLocalStorage(newList.toList())
+                            if(isHasRecordInDB == null || isHasRecordInDB == false)
+                                writeToSharedPrefsUseCase
+                                    .writeToSharedPrefs(
+                                        Constants.PrefDataType.IS_RECORDED_IN_DB, true)
+                        }
+
                     }
                 }
                 is Failure -> {
@@ -258,15 +260,9 @@ class EditorViewModel @Inject constructor(
                     val newClipArt = clipArts[index].copy(img = uri.toString())
                     newClipArts.add(newClipArt)
                 }
-                val size =
-                    readFromSharedPrefsUseCase
-                        .readFromSharedPrefs<Int>(Constants.PrefDataType.SIZE)
-                if(size != null && size < newClipArts.size){
-                    saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts.toList())
-                    writeToSharedPrefsUseCase
-                        .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
-                }
-
+                saveClipArtsInDBUseCase.saveClipArtsInDB(newClipArts.toList())
+                writeToSharedPrefsUseCase
+                    .writeToSharedPrefs(Constants.PrefDataType.SIZE, newClipArts.size)
 
             }
         }

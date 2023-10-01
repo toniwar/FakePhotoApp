@@ -121,6 +121,9 @@ class ImageProvider @Inject constructor(private val context: Context) {
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            id?.let {
+                put(MediaStore.MediaColumns._ID, (42000+id).toLong())
+            }
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, path)
@@ -132,6 +135,7 @@ class ImageProvider @Inject constructor(private val context: Context) {
         contentValues: ContentValues,
         name: String
     ):Uri?{
+
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME,
         MediaStore.MediaColumns._ID)
@@ -159,6 +163,8 @@ class ImageProvider @Inject constructor(private val context: Context) {
                         }
                     }
                 }
+
+
             }
             cursor.close()
         }

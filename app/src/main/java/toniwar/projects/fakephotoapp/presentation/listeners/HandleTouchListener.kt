@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import kotlin.math.max
+import kotlin.math.min
 
 class HandleTouchListener(
     context: Context
@@ -21,7 +23,7 @@ class HandleTouchListener(
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             scaleFactor *= detector.scaleFactor
 
-            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f))
+            scaleFactor = max(0.1f, min(scaleFactor, 5.0f))
 
             return true
         }
@@ -30,13 +32,13 @@ class HandleTouchListener(
 
     private val scaleDetector = ScaleGestureDetector(context, scaleListener)
 
-
-
     override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
 
         if(p0 == null || p1 == null) return false
 
-        if(scaleDetector.onTouchEvent(p1)) scaleView(p0)
+        if(scaleDetector.onTouchEvent(p1)){
+            scaleView(p0)
+        }
 
 
         when(p1.action){
@@ -51,7 +53,6 @@ class HandleTouchListener(
                 moveView(p0)
 
             }
-
 
         }
 
@@ -73,9 +74,7 @@ class HandleTouchListener(
             .scaleY(scaleFactor)
             .setDuration(0)
             .start()
+
     }
-
-
-
 
 }
